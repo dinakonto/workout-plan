@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Gym Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --card: #fffdf8;
+    --ink: #1a1a18;
+    --muted: #7a7570;
+    --legs: #c8a96e;
+    --push: #8fb4a0;
+    --pull: #a09bc8;
+    --core: #c87e7e;
+    --accent: #1a1a18;
+    --border: #e0d9ce;
+    --done-bg: #f0f7f3;
+    --done-border: #8fb4a0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 0 0 80px 0;
+  }
+
+  header {
+    padding: 36px 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .tab-bar {
+    display: flex;
+    overflow-x: auto;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    gap: 0;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab[data-day="legs"].active { border-bottom-color: var(--legs); }
+  .tab[data-day="push"].active { border-bottom-color: var(--push); }
+  .tab[data-day="pull"].active { border-bottom-color: var(--pull); }
+  .tab[data-day="core"].active { border-bottom-color: var(--core); }
+
+  .page { display: none; padding: 20px; }
+  .page.active { display: block; }
+
+  .section-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+  .warmup-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .warmup-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .warmup-header .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .warmup-header h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .warmup-header .chevron {
+    font-size: 0.7rem;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .warmup-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .warmup-body.open { display: block; }
+
+  .warmup-step {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .warmup-step:last-child { border-bottom: none; }
+
+  .warmup-step strong {
+    display: block;
+    font-size: 0.72rem;
+    margin-bottom: 2px;
+  }
+
+  .warmup-step span {
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  /* ── Exercise card ── */
+  .exercise-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.25s, background 0.25s;
+  }
+
+  .exercise-card.done {
+    background: var(--done-bg);
+    border-color: var(--done-border);
+    opacity: 0.75;
+  }
+
+  .ex-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    user-select: none;
+  }
+
+  /* Checkbox */
+  .ex-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+    color: transparent;
+  }
+
+  .exercise-card.done .ex-check {
+    background: var(--push);
+    border-color: var(--push);
+    color: white;
+  }
+
+  .ex-main { flex: 1; cursor: pointer; }
+
+  .ex-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .exercise-card.done .ex-name {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .ex-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tag {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--bg);
+  }
+
+  .tag.highlight {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .tag-edit {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px dashed var(--muted);
+    color: var(--muted);
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    outline: none;
+    width: auto;
+    min-width: 60px;
+    max-width: 120px;
+    cursor: text;
+  }
+
+  .tag-edit:focus {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* Sets/reps input is on a dark background — keep text white always */
+  .tag-edit.highlight {
+    color: var(--bg);
+    caret-color: var(--bg);
+  }
+
+  .tag-edit.highlight:focus {
+    color: var(--bg);
+    border-color: rgba(255,255,255,0.5);
+  }
+
+  .edit-hint {
+    font-size: 0.56rem;
+    color: var(--muted);
+    opacity: 0.7;
+    margin-top: 3px;
+    letter-spacing: 0.06em;
+  }
+
+  .ex-chevron {
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding-top: 4px;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+
+  .ex-body {
+    display: none;
+    padding: 12px 16px 16px 50px;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .ex-body.open { display: block; }
+
+  .ex-body .note-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .key-principles {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+
+  .key-principles h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    opacity: 0.9;
+  }
+
+  .principle {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    font-size: 0.73rem;
+    line-height: 1.55;
+  }
+
+  .principle:last-child { border-bottom: none; }
+
+  .principle strong {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    margin-bottom: 3px;
+  }
+
+  .day-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .day-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .day-title h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .day-title p {
+    font-size: 0.67rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .chevron-open { transform: rotate(180deg); }
+
+  /* ── Progress bar ── */
+  .progress-bar-wrap {
+    margin-bottom: 20px;
+    background: var(--border);
+    border-radius: 20px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+    background: var(--ink);
+  }
+
+  .progress-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Session Summary button ── */
+  .summary-btn {
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .summary-btn:hover { opacity: 0.85; }
+
+  /* ── Summary Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,24,0.6);
+    z-index: 100;
+    padding: 20px;
+    align-items: flex-end;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--card);
+    border-radius: 16px 16px 12px 12px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 4px;
+  }
+
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .modal-note {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .summary-text {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    max-height: 260px;
+    overflow-y: auto;
+    user-select: all;
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-copy {
+    flex: 1;
+    padding: 13px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-copy:hover { opacity: 0.85; }
+  .btn-copy.copied { background: var(--push); }
+
+  .btn-dismiss {
+    padding: 13px 18px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+  }
+
+  .session-note-wrap {
+    margin-top: 14px;
+  }
+
+  .session-note-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .session-note-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 70px;
+    outline: none;
+    line-height: 1.5;
+  }
+
+  .session-note-input:focus { border-color: var(--ink); }
+
+  /* ── Per-exercise session note ── */
+  .ex-session-note-wrap {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .ex-session-note-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .ex-session-note {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 58px;
+    outline: none;
+    line-height: 1.5;
+  }
+
+  .ex-session-note:focus { border-color: var(--ink); }
+  .ex-session-note::placeholder { color: var(--muted); opacity: 0.7; }
+
+  /* ── Dashboard ── */
+  .dash-workout-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    padding: 18px 18px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    user-select: none;
+  }
+
+  .dash-workout-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+  .dash-workout-card.dash-done {
+    background: var(--done-bg);
+    border-color: var(--done-border);
+  }
+
+  .dash-color-bar {
+    width: 5px;
+    border-radius: 4px;
+    align-self: stretch;
+    flex-shrink: 0;
+    min-height: 48px;
+  }
+
+  .dash-workout-info { flex: 1; }
+
+  .dash-workout-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .dash-workout-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  .dash-mini-bar-wrap {
+    margin-top: 8px;
+    background: var(--border);
+    border-radius: 20px;
+    height: 4px;
+    overflow: hidden;
+  }
+
+  .dash-mini-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  .dash-status {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  .dash-done .dash-status {
+    background: var(--push);
+    border-color: var(--push);
+    color: white;
+    font-size: 0.85rem;
+  }
+
+  .dash-week-summary {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .dash-week-count {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.6rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .dash-week-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.55;
+    margin-top: 5px;
+  }
+
+  .dash-week-dots {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .dash-week-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    transition: background 0.3s;
+  }
+
+  .dash-week-dot.filled { background: rgba(255,255,255,0.85); }
+
+  .dash-reset-wrap {
+    margin-top: 28px;
+    text-align: center;
+  }
+
+  .dash-reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 11px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .dash-reset-btn:hover { border-color: var(--muted); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>My Gym Plan</h1>
+  <p>3–4 days/week · Strength & Conditioning</p>
+</header>
+
+<div class="tab-bar">
+  <button class="tab active" data-day="dashboard" onclick="showPage('dashboard', this)">🏠 This Week</button>
+  <button class="tab" data-day="legs" onclick="showPage('legs', this)">🦵 Legs</button>
+  <button class="tab" data-day="push" onclick="showPage('push', this)">💪 Push</button>
+  <button class="tab" data-day="pull" onclick="showPage('pull', this)">🏋️ Pull</button>
+  <button class="tab" data-day="core" onclick="showPage('core', this)">🧘 Core</button>
+  <button class="tab" data-day="tips" onclick="showPage('tips', this)">📋 Tips</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--ink)"></div>
+    <div>
+      <h2>This Week</h2>
+      <p id="dashboard-week-label"></p>
+    </div>
+  </div>
+
+  <div id="dashboard-cards"></div>
+
+  <div class="dash-reset-wrap">
+    <button class="dash-reset-btn" onclick="confirmReset()">↺ Start New Week</button>
+  </div>
+</div>
+
+<!-- RESET CONFIRM MODAL -->
+<div class="modal-overlay" id="reset-modal-overlay" onclick="handleResetOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Start New Week?</h2>
+      <button class="modal-close" onclick="closeResetModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-note">This will clear all completed checkboxes, edited weights, reps and session notes for every workout. Your current week's data will be lost.</p>
+      <p class="modal-note" style="margin-top:8px">Are you sure you want to reset?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-copy" style="background:#c87e7e" onclick="executeReset()">Yes, reset everything</button>
+      <button class="btn-dismiss" onclick="closeResetModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-legs">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--legs)"></div>
+    <div>
+      <h2>Legs Day</h2>
+      <p>Glute & Knee Focus</p>
+    </div>
+  </div>
+
+  <div id="progress-legs"></div>
+
+  <div class="section-label">Warm-Up (~10 min)</div>
+  <div class="warmup-card">
+    <div class="warmup-header" onclick="toggleWarmup(this)">
+      <div class="dot" style="background:var(--legs)"></div>
+      <h3>5 min rower or ski erg, then movement prep</h3>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="warmup-body">
+      <div class="warmup-step"><strong>Glute Bridges</strong><span>15 reps — pause and squeeze at the top</span></div>
+      <div class="warmup-step"><strong>Clamshells</strong><span>12 each side — banded or unbanded</span></div>
+      <div class="warmup-step"><strong>Bodyweight Squat to Hip Hinge</strong><span>10 slow reps — feel the difference between the two movements</span></div>
+      <div class="warmup-step"><strong>Leg Swings</strong><span>10 forward/back + 10 side-to-side, each leg</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Exercises</div>
+  <div id="legs-exercises"></div>
+
+  <div class="section-label">Notes</div>
+  <div class="key-principles">
+    <h3>Today's focus</h3>
+    <div class="principle"><strong>Knee caving</strong>Keep knees tracking over toes on every rep. If they cave inward, reduce weight or slow down.</div>
+    <div class="principle"><strong>Bulgarian split squat</strong>Start bodyweight — the balance challenge is the point. Lower slowly (3 counts down).</div>
+    <div class="principle"><strong>Single-leg RDL</strong>Hinge at the hip, keep back flat. Use a wall or cable for balance if needed at first.</div>
+  </div>
+
+  <button class="summary-btn" onclick="openSummary('legs')">📋 End Session & Get Summary</button>
+</div>
+
+<!-- PUSH -->
+<div class="page" id="page-push">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--push)"></div>
+    <div>
+      <h2>Push Day</h2>
+      <p>Chest, Shoulders & Triceps</p>
+    </div>
+  </div>
+
+  <div id="progress-push"></div>
+
+  <div class="section-label">Warm-Up (~10 min)</div>
+  <div class="warmup-card">
+    <div class="warmup-header" onclick="toggleWarmup(this)">
+      <div class="dot" style="background:var(--push)"></div>
+      <h3>5 min rower or ski erg, then movement prep</h3>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="warmup-body">
+      <div class="warmup-step"><strong>Arm Circles</strong><span>10 forward, 10 backward</span></div>
+      <div class="warmup-step"><strong>Band Pull-Aparts or TRX Face Pulls</strong><span>15 reps</span></div>
+      <div class="warmup-step"><strong>Wall Slides</strong><span>10 reps — back against wall, slide arms up and down</span></div>
+      <div class="warmup-step"><strong>Incline Push-Ups</strong><span>10 reps at slow tempo</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Exercises</div>
+  <div id="push-exercises"></div>
+
+  <button class="summary-btn" onclick="openSummary('push')">📋 End Session & Get Summary</button>
+</div>
+
+<!-- PULL -->
+<div class="page" id="page-pull">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--pull)"></div>
+    <div>
+      <h2>Pull Day</h2>
+      <p>Back, Biceps & Rear Delts</p>
+    </div>
+  </div>
+
+  <div id="progress-pull"></div>
+
+  <div class="section-label">Warm-Up (~10 min)</div>
+  <div class="warmup-card">
+    <div class="warmup-header" onclick="toggleWarmup(this)">
+      <div class="dot" style="background:var(--pull)"></div>
+      <h3>5 min rower or ski erg, then movement prep</h3>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="warmup-body">
+      <div class="warmup-step"><strong>Cat-Cow</strong><span>10 reps</span></div>
+      <div class="warmup-step"><strong>Thoracic Rotations</strong><span>10 each side — on hands and knees, thread one arm under your body</span></div>
+      <div class="warmup-step"><strong>Band Pull-Aparts or TRX Face Pulls</strong><span>15 reps</span></div>
+      <div class="warmup-step"><strong>Dead Hang</strong><span>20–30 seconds — decompresses the spine, great for shoulder health</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Exercises</div>
+  <div id="pull-exercises"></div>
+
+  <div class="section-label">Notes</div>
+  <div class="key-principles">
+    <h3>Today's focus</h3>
+    <div class="principle"><strong>Posture</strong>This day has the biggest impact on lower back health. Focus on squeezing shoulder blades together on rows.</div>
+    <div class="principle"><strong>Lat Pulldown</strong>Pull to upper chest, lean back slightly. Don't yank — control the movement both ways.</div>
+    <div class="principle"><strong>Assisted Pull-Up</strong>Work towards reducing the assistance weight over time — this is your long-term goal exercise!</div>
+  </div>
+
+  <button class="summary-btn" onclick="openSummary('pull')">📋 End Session & Get Summary</button>
+</div>
+
+<!-- CORE -->
+<div class="page" id="page-core">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--core)"></div>
+    <div>
+      <h2>Core & Conditioning</h2>
+      <p>Stability, Rotation & Lower Back</p>
+    </div>
+  </div>
+
+  <div id="progress-core"></div>
+
+  <div class="section-label">Warm-Up (~10 min)</div>
+  <div class="warmup-card">
+    <div class="warmup-header" onclick="toggleWarmup(this)">
+      <div class="dot" style="background:var(--core)"></div>
+      <h3>5 min rower or ski erg, then movement prep</h3>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="warmup-body">
+      <div class="warmup-step"><strong>Cat-Cow</strong><span>10 reps</span></div>
+      <div class="warmup-step"><strong>Hip 90/90 Stretch</strong><span>60 seconds each side — sit on floor, both legs at 90°, rotate between them</span></div>
+      <div class="warmup-step"><strong>Glute Bridges</strong><span>15 reps</span></div>
+      <div class="warmup-step"><strong>World's Greatest Stretch</strong><span>5 each side — lunge with thoracic rotation. Look it up on YouTube, it's worth it!</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Exercises</div>
+  <div id="core-exercises"></div>
+
+  <div class="section-label">Notes</div>
+  <div class="key-principles">
+    <h3>Today's focus</h3>
+    <div class="principle"><strong>The "glue" day</strong>This work directly protects your lower back and translates to better performance in soccer and climbing.</div>
+    <div class="principle"><strong>Dead Bug</strong>Go slow. The point is control — if your lower back lifts off the floor, you've gone too far.</div>
+    <div class="principle"><strong>Pallof Press</strong>Resist the rotation — don't let the cable pull you. The tension is the exercise.</div>
+  </div>
+
+  <button class="summary-btn" onclick="openSummary('core')">📋 End Session & Get Summary</button>
+</div>
+
+<!-- TIPS -->
+<div class="page" id="page-tips">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--accent)"></div>
+    <div>
+      <h2>Key Principles</h2>
+      <p>Keep these in mind every session</p>
+    </div>
+  </div>
+
+  <div class="key-principles">
+    <h3>General</h3>
+    <div class="principle"><strong>Starting weights</strong>These are conservative on purpose. Focus on form first. You should finish each set feeling like you could do 2–3 more reps.</div>
+    <div class="principle"><strong>Progressing weight</strong>Once all 3 sets feel easy, go up by the smallest increment available. Don't rush this.</div>
+    <div class="principle"><strong>Bracing your core</strong>Before every single rep of everything — imagine someone is about to lightly punch you in the stomach. This habit protects your lower back.</div>
+    <div class="principle"><strong>Knee pain vs muscle fatigue</strong>Muscle burn and fatigue is normal. Sharp or joint pain is not — stop and swap for the bodyweight version.</div>
+    <div class="principle"><strong>First 2–3 weeks</strong>May feel too easy on your upper body during single-leg work — that's fine. The balance and stability challenge is the adaptation you're after.</div>
+    <div class="principle"><strong>DOMS</strong>Legs day, especially Bulgarian split squats and single-leg RDLs, will likely leave you sore after the first few sessions. Completely normal!</div>
+    <div class="principle"><strong>Your PT</strong>Show them this plan so they can check your form on the cable row, lat pulldown and hip thrust in particular.</div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px">Weekly Structure</div>
+  <div class="warmup-card">
+    <div class="warmup-header" style="cursor:default">
+      <div class="dot" style="background:var(--muted)"></div>
+      <h3>3 days: drop whichever day fits your schedule least</h3>
+    </div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="warmup-card">
+    <div class="warmup-header" style="cursor:default">
+      <div class="dot" style="background:var(--ink)"></div>
+      <h3>4 days: do all four with at least one rest day between legs days</h3>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Session Summary</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-note">Copy this and paste it into a new chat with Claude to log your session and get any adjustments.</p>
+      <div class="summary-text" id="summary-text"></div>
+      <div class="session-note-wrap">
+        <div class="session-note-label">Add a note (optional)</div>
+        <textarea class="session-note-input" id="session-note" placeholder="How did it feel? Any pain, skipped exercises, energy level..." oninput="regenerateSummary()"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-copy" id="btn-copy" onclick="copyToClipboard()">Copy to clipboard</button>
+      <button class="btn-dismiss" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = {
+  legs: [
+    { name: "Leg Press", sets: "3 × 12", weight: "40 kg", note: "Feet high on the platform = more glute, easier on knees." },
+    { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "Bodyweight to start", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Physio recommendation — harder than it looks!" },
+    { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "Bodyweight or 1 × 5–8 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Use a wall or cable for balance at first. Physio recommendation." },
+    { name: "Seated Leg Curl", sets: "3 × 12", weight: "20 kg", note: "Key for hamstring strength and knee protection. Technique: controlled 1–2 count curl up, then slow 2–3 count return — don't jerk or use momentum. Check the pad is just above your heels (not mid-calf), and keep your upper body relaxed — don't grip the handles and pull. Repeat at 20 kg until the form feels clean before progressing." },
+    { name: "Calf Raises", sets: "3 × 15", weight: "Bodyweight", note: "Important for knee and ankle support, especially for running." },
+  ],
+  push: [
+    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "~15–20 kg total", note: "Easier to control than barbell — great starting point. Keep elbows at about 45° from your body." },
+    { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "5–7.5 kg each", note: "Seated removes lower back strain. Press straight up, don't flare elbows too wide." },
+    { name: "Cable Lateral Raise", sets: "3 × 12 each side", weight: "~5 kg", note: "Slow and controlled. Lift to shoulder height only." },
+    { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "~15 kg", note: "Keep elbows tucked in at your sides throughout. Don't swing." },
+    { name: "Incline Push-Ups", sets: "2 × 10–15", weight: "Bodyweight", note: "Building towards flat push-ups over time. Hands on bench, body in a straight line." },
+  ],
+  pull: [
+    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "~25–30 kg", note: "Pull to upper chest, lean back slightly. Think about pulling your elbows down and back." },
+    { name: "Seated Cable Row", sets: "3 × 12", weight: "~25–30 kg", note: "Squeeze shoulder blades together at the end of each rep. Don't round your back on the return." },
+    { name: "Cable Face Pull", sets: "3 × 15", weight: "~10–15 kg", note: "Brilliant for shoulder health and posture. Pull towards your face, elbows high and wide." },
+    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "High assistance to start", note: "Work towards reducing the assistance weight over time. Full range of motion — start from a dead hang." },
+    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "6–8 kg each", note: "Keep elbows at your sides. Don't swing — slow on the way down." },
+  ],
+  core: [
+    { name: "Dead Bug", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow and controlled is everything here." },
+    { name: "Pallof Press (cable)", sets: "3 × 12 each side", weight: "~10–15 kg", note: "Stand side-on to the cable. Press out and resist the rotation back. The tension IS the exercise — don't let the cable pull you." },
+    { name: "Single-Leg Glute Bridge", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, one foot on the floor. Drive hips up through your heel. Good bridge between legs day and core work." },
+    { name: "Cable Woodchop", sets: "3 × 12 each side", weight: "~10 kg", note: "Rotational power — great for soccer. Start high on one side, pull diagonally down across your body. Control both directions." },
+    { name: "Plank", sets: "3 × 30–45 sec", weight: "Bodyweight", note: "Don't let your hips drop or pike up. Squeeze your glutes and core. Breathe." },
+    { name: "TRX Row", sets: "3 × 12", weight: "Body at ~45°", note: "The more horizontal your body, the harder it is. Squeeze shoulder blades together at the top. Great full-chain exercise." },
+  ]
+};
+
+const dayMeta = {
+  legs: { label: 'Legs Day', sub: 'Glutes & Knees', emoji: '🦵' },
+  push: { label: 'Push Day', sub: 'Chest, Shoulders & Triceps', emoji: '💪' },
+  pull: { label: 'Pull Day', sub: 'Back, Biceps & Rear Delts', emoji: '🏋️' },
+  core: { label: 'Core & Conditioning', sub: 'Stability, Rotation & Lower Back', emoji: '🧘' },
+};
+
+// ── State ──
+const state = {};
+['legs','push','pull','core'].forEach(day => {
+  state[day] = {};
+  data[day].forEach((_, i) => {
+    state[day][i] = { done: false, sets: data[day][i].sets, weight: data[day][i].weight, sessionNote: '' };
+  });
+});
+
+// Track which workouts have been marked "session complete" this week
+const weekCompleted = { legs: false, push: false, pull: false, core: false };
+
+// ── Week helpers ──
+function getMondayOfWeek(d) {
+  const date = new Date(d);
+  const day = date.getDay(); // 0=Sun
+  const diff = (day === 0) ? -6 : 1 - day; // shift to Monday
+  date.setDate(date.getDate() + diff);
+  date.setHours(0,0,0,0);
+  return date;
+}
+
+function getWeekLabel() {
+  const now = new Date();
+  const mon = getMondayOfWeek(now);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  return `${fmt(mon)} – ${fmt(sun)}`;
+}
+
+// ── Dashboard ──
+function renderDashboard() {
+  document.getElementById('dashboard-week-label').textContent = getWeekLabel();
+
+  const days = ['legs','push','pull','core'];
+  const completedCount = days.filter(d => weekCompleted[d]).length;
+
+  const container = document.getElementById('dashboard-cards');
+
+  // Week summary banner
+  const dots = days.map(d =>
+    `<div class="dash-week-dot${weekCompleted[d] ? ' filled' : ''}"></div>`
+  ).join('');
+
+  const messages = ['Let\'s go!', 'Good start!', 'Halfway there!', 'Three down!', 'Full week! 🎉'];
+  const msg = messages[completedCount];
+
+  container.innerHTML = `
+    <div class="dash-week-summary">
+      <div>
+        <div class="dash-week-count">${completedCount}<span style="font-size:1.2rem;opacity:0.5">/4</span></div>
+        <div class="dash-week-label">${msg}</div>
+      </div>
+      <div class="dash-week-dots">${dots}</div>
+    </div>
+  ` + days.map(day => {
+    const total = data[day].length;
+    const doneExs = Object.values(state[day]).filter(s => s.done).length;
+    const pct = Math.round((doneExs / total) * 100);
+    const isDone = weekCompleted[day];
+    const color = `var(--${day})`;
+
+    let progressLine = '';
+    if (!isDone && doneExs > 0) {
+      progressLine = `
+        <div class="dash-mini-bar-wrap">
+          <div class="dash-mini-bar-fill" style="width:${pct}%; background:${color}"></div>
+        </div>`;
+    }
+
+    const statusContent = isDone ? '✓' : (doneExs > 0 ? `${doneExs}/${total}` : '');
+    const statusStyle = isDone ? '' : `font-size:0.55rem; color:var(--muted);`;
+
+    return `
+      <div class="dash-workout-card${isDone ? ' dash-done' : ''}" onclick="goToWorkout('${day}')">
+        <div class="dash-color-bar" style="background:${color}"></div>
+        <div class="dash-workout-info">
+          <div class="dash-workout-name">${dayMeta[day].label}</div>
+          <div class="dash-workout-sub">${dayMeta[day].sub}</div>
+          ${progressLine}
+        </div>
+        <div class="dash-status" style="${statusStyle}">${statusContent}</div>
+      </div>`;
+  }).join('');
+}
+
+function goToWorkout(day) {
+  const tab = document.querySelector(`.tab[data-day="${day}"]`);
+  showPage(day, tab);
+}
+
+// ── Reset ──
+function confirmReset() {
+  document.getElementById('reset-modal-overlay').classList.add('open');
+}
+
+function closeResetModal() {
+  document.getElementById('reset-modal-overlay').classList.remove('open');
+}
+
+function handleResetOverlayClick(e) {
+  if (e.target === document.getElementById('reset-modal-overlay')) closeResetModal();
+}
+
+function executeReset() {
+  ['legs','push','pull','core'].forEach(day => {
+    weekCompleted[day] = false;
+    data[day].forEach((ex, i) => {
+      state[day][i] = { done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
+    });
+    renderExercises(day);
+  });
+  closeResetModal();
+  renderDashboard();
+}
+
+// ── Exercises ──
+let currentSummaryDay = null;
+
+function renderExercises(day) {
+  const container = document.getElementById(`${day}-exercises`);
+  if (!container) return;
+  container.innerHTML = data[day].map((ex, i) => `
+    <div class="exercise-card${state[day][i].done ? ' done' : ''}" id="card-${day}-${i}">
+      <div class="ex-header">
+        <div class="ex-check" id="check-${day}-${i}" onclick="toggleDone('${day}', ${i})" title="Mark complete">✓</div>
+        <div class="ex-main" onclick="toggleEx(this)">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta">
+            <input class="tag-edit tag highlight" id="sets-${day}-${i}"
+              value="${state[day][i].sets}"
+              title="Edit sets/reps"
+              onclick="event.stopPropagation()"
+              onchange="updateState('${day}', ${i}, 'sets', this.value)"
+              style="width:${Math.max(70, state[day][i].sets.length * 8)}px"
+            />
+            <input class="tag-edit" id="weight-${day}-${i}"
+              value="${state[day][i].weight}"
+              title="Edit weight"
+              onclick="event.stopPropagation()"
+              onchange="updateState('${day}', ${i}, 'weight', this.value)"
+              style="width:${Math.max(70, state[day][i].weight.length * 8)}px"
+            />
+          </div>
+          <div class="edit-hint">tap fields to edit · tap name to expand</div>
+        </div>
+        <span class="ex-chevron" onclick="toggleExById('body-${day}-${i}', this)">▼</span>
+      </div>
+      <div class="ex-body" id="body-${day}-${i}">
+        <div class="note-label">Notes</div>
+        ${ex.note}
+        <div class="ex-session-note-wrap">
+          <div class="ex-session-note-label">My session note</div>
+          <textarea class="ex-session-note" id="exnote-${day}-${i}"
+            placeholder="How did this feel? Weight used, anything to remember..."
+            onclick="event.stopPropagation()"
+            oninput="updateState('${day}', ${i}, 'sessionNote', this.value)"
+          >${state[day][i].sessionNote}</textarea>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  renderProgress(day);
+}
+
+function updateState(day, i, field, val) {
+  state[day][i][field] = val;
+}
+
+function toggleDone(day, i) {
+  state[day][i].done = !state[day][i].done;
+  const card = document.getElementById(`card-${day}-${i}`);
+  card.classList.toggle('done', state[day][i].done);
+  renderProgress(day);
+}
+
+function renderProgress(day) {
+  const wrap = document.getElementById(`progress-${day}`);
+  if (!wrap) return;
+  const total = data[day].length;
+  const done = Object.values(state[day]).filter(s => s.done).length;
+  const pct = Math.round((done / total) * 100);
+  const colorVar = `var(--${day})`;
+  wrap.innerHTML = `
+    <div class="progress-label">
+      <span>Progress</span>
+      <span>${done} / ${total} exercises</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width:${pct}%; background:${colorVar}"></div>
+    </div>
+  `;
+}
+
+function toggleEx(mainEl) {
+  const card = mainEl.closest('.exercise-card');
+  const body = card.querySelector('.ex-body');
+  const chevron = card.querySelector('.ex-chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('chevron-open');
+}
+
+function toggleExById(bodyId, chevron) {
+  const body = document.getElementById(bodyId);
+  body.classList.toggle('open');
+  chevron.classList.toggle('chevron-open');
+}
+
+['legs','push','pull','core'].forEach(renderExercises);
+
+function showPage(day, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`page-${day}`).classList.add('active');
+  btn.classList.add('active');
+  if (day === 'dashboard') renderDashboard();
+}
+
+function toggleWarmup(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('chevron-open');
+}
+
+// ── Summary ──
+const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day', core: 'Core & Conditioning' };
+
+function buildSummaryText(day, note) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const exercises = data[day];
+  const total = exercises.length;
+  const doneCount = exercises.filter((_, i) => state[day][i].done).length;
+
+  let lines = [];
+  lines.push(`SESSION LOG — ${dayLabels[day].toUpperCase()}`);
+  lines.push(`Date: ${dateStr}`);
+  lines.push(`Completed: ${doneCount}/${total} exercises`);
+  lines.push('');
+  lines.push('EXERCISES:');
+
+  exercises.forEach((ex, i) => {
+    const s = state[day][i];
+    const status = s.done ? '✓' : '○';
+    lines.push(`${status} ${ex.name}`);
+    lines.push(`   Sets/Reps: ${s.sets}`);
+    lines.push(`   Weight: ${s.weight}`);
+    if (s.sessionNote && s.sessionNote.trim()) {
+      lines.push(`   My note: ${s.sessionNote.trim()}`);
+    }
+  });
+
+  if (note && note.trim()) {
+    lines.push('');
+    lines.push('NOTES FROM SESSION:');
+    lines.push(note.trim());
+  }
+
+  lines.push('');
+  lines.push('---');
+  lines.push('Please review this log and let me know:');
+  lines.push('1. Whether I should adjust any weights or reps for next time');
+  lines.push('2. Any form tips to keep in mind based on what I logged');
+  lines.push('3. If my progress looks on track');
+
+  return lines.join('\n');
+}
+
+function openSummary(day) {
+  // Mark workout as completed for the week when summary is opened
+  weekCompleted[day] = true;
+  currentSummaryDay = day;
+  document.getElementById('session-note').value = '';
+  document.getElementById('summary-text').textContent = buildSummaryText(day, '');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function regenerateSummary() {
+  if (!currentSummaryDay) return;
+  const note = document.getElementById('session-note').value;
+  document.getElementById('summary-text').textContent = buildSummaryText(currentSummaryDay, note);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function copyToClipboard() {
+  const text = document.getElementById('summary-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy to clipboard';
+      btn.classList.remove('copied');
+    }, 2200);
+  });
+}
+
+// Init
+renderDashboard();
+</script>
+</body>
+</html>
