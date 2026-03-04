@@ -1332,6 +1332,37 @@ function buildSummaryText(day, note) {
   return lines.join('\n');
 }
 
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzDwjIIQ8-SYiZe0TRM7BkD2bdz56wUlJL-Dd6dx2dbdX9o0r_wvlnipuP3spMQvgptIw/exec';
+
+function postToSheets(day, sessionNote) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const exercises = data[day];
+  const doneCount = exercises.filter((_, i) => state[day][i].done).length;
+
+  const payload = {
+    date: dateStr,
+    day: dayLabels[day],
+    completed: doneCount,
+    total: exercises.length,
+    sessionNote: sessionNote || '',
+    exercises: exercises.map((ex, i) => ({
+      name: ex.name,
+      done: state[day][i].done,
+      sets: state[day][i].sets,
+      weight: state[day][i].weight,
+      sessionNote: state[day][i].sessionNote || ''
+    }))
+  };
+
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Sheets sync failed:', err));
+}
+
 function openSummary(day) {
   // Mark workout as completed for the week when summary is opened
   weekCompleted[day] = true;
@@ -1339,12 +1370,16 @@ function openSummary(day) {
   document.getElementById('session-note').value = '';
   document.getElementById('summary-text').textContent = buildSummaryText(day, '');
   document.getElementById('modal-overlay').classList.add('open');
+  // Post to Google Sheets
+  postToSheets(day, '');
 }
 
 function regenerateSummary() {
   if (!currentSummaryDay) return;
   const note = document.getElementById('session-note').value;
   document.getElementById('summary-text').textContent = buildSummaryText(currentSummaryDay, note);
+  // Re-sync with updated session note
+  postToSheets(currentSummaryDay, note);
 }
 
 function closeModal() {
