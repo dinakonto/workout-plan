@@ -1050,7 +1050,7 @@
       </div>
       <div class="modal-footer-btns">
         <button class="btn-copy" id="btn-copy" onclick="copyToClipboard()">Copy to clipboard</button>
-        <button class="btn-dismiss" onclick="closeModal()">Done</button>
+        <button class="btn-dismiss" onclick="doneAndClose()">Done</button>
       </div>
     </div>
   </div>
@@ -1431,14 +1431,18 @@ function openSummary(day) {
   document.getElementById('send-to-sheets').checked = true;
   document.getElementById('summary-text').textContent = buildSummaryText(day, '');
   document.getElementById('modal-overlay').classList.add('open');
-  postToSheets(day, '');
 }
 
 function regenerateSummary() {
   if (!currentSummaryDay) return;
   const note = document.getElementById('session-note').value;
   document.getElementById('summary-text').textContent = buildSummaryText(currentSummaryDay, note);
+}
+
+function doneAndClose() {
+  const note = document.getElementById('session-note').value;
   postToSheets(currentSummaryDay, note);
+  closeModal();
 }
 
 function closeModal() {
