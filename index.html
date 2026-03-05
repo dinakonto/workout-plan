@@ -513,10 +513,36 @@
   }
 
   .modal-footer {
-    padding: 16px 20px;
+    padding: 12px 20px 16px;
     border-top: 1px solid var(--border);
+  }
+
+  .modal-footer-top {
+    margin-bottom: 10px;
+  }
+
+  .modal-footer-btns {
     display: flex;
     gap: 10px;
+  }
+
+  .sheets-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    user-select: none;
+  }
+
+  .sheets-toggle input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--ink);
+    cursor: pointer;
   }
 
   .btn-copy {
@@ -1016,8 +1042,16 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-copy" id="btn-copy" onclick="copyToClipboard()">Copy to clipboard</button>
-      <button class="btn-dismiss" onclick="closeModal()">Done</button>
+      <div class="modal-footer-top">
+        <label class="sheets-toggle">
+          <input type="checkbox" id="send-to-sheets" checked>
+          <span>Save to Google Sheets</span>
+        </label>
+      </div>
+      <div class="modal-footer-btns">
+        <button class="btn-copy" id="btn-copy" onclick="copyToClipboard()">Copy to clipboard</button>
+        <button class="btn-dismiss" onclick="closeModal()">Done</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1025,6 +1059,7 @@
 <script>
 const data = {
   legs: [
+    { name: "MultiPower Squat", sets: "3 × 10", weight: "20 kg", note: "Squat pattern on the Smith/MultiPower machine. Feet shoulder-width apart, slightly forward of the bar. Lower to parallel (or just below if comfortable), drive through heels to stand. The fixed bar path makes it easier to focus on depth and control than a free squat. Keep your chest up and core braced throughout." },
     { name: "Leg Press", sets: "3 × 12", weight: "40 kg", note: "Feet high on the platform = more glute, easier on knees." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "Bodyweight to start", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Physio recommendation — harder than it looks!" },
     { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "Bodyweight or 1 × 5–8 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Use a wall or cable for balance at first. Physio recommendation." },
@@ -1039,11 +1074,11 @@ const data = {
     { name: "Incline Push-Ups", sets: "2 × 10–15", weight: "Bodyweight", note: "Building towards flat push-ups over time. Hands on bench, body in a straight line." },
   ],
   pull: [
-    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "~25–30 kg", note: "Pull to upper chest, lean back slightly. Think about pulling your elbows down and back." },
-    { name: "Seated Cable Row", sets: "3 × 12", weight: "~25–30 kg", note: "Squeeze shoulder blades together at the end of each rep. Don't round your back on the return." },
-    { name: "Cable Face Pull", sets: "3 × 15", weight: "~10–15 kg", note: "Brilliant for shoulder health and posture. Pull towards your face, elbows high and wide." },
-    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "High assistance to start", note: "Work towards reducing the assistance weight over time. Full range of motion — start from a dead hang." },
-    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "6–8 kg each", note: "Keep elbows at your sides. Don't swing — slow on the way down." },
+    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "25 kg", note: "Pull to upper chest, lean back slightly. Think about pulling your elbows down and back. Start each rep from a full dead hang (arms fully extended overhead) — if the bar can't reach your upper chest, you've gone too heavy. Full range at 25 kg before moving to 30 kg." },
+    { name: "Seated Cable Row", sets: "3 × 12", weight: "20 kg", note: "Focus on the squeeze — shoulder blades pinching together at the end of each rep, then a controlled return without rounding forward. Complete all 3 sets at 20 kg before progressing." },
+    { name: "Cable Face Pull", sets: "3 × 15", weight: "5 kg", note: "Technique first. Elbows high and wide (above shoulder height), pull towards your forehead not your chin, and squeeze at the end. Once the motion feels grooved, move to 7.5–10 kg." },
+    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "40 kg assistance", note: "Stick to the same assistance weight across all 3 sets — varying it each set makes progress hard to track. Start at 40 kg assistance. Full range of motion — start from a dead hang. Complete all 3 × 8 at 40 kg before reducing assistance." },
+    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "4 kg each", note: "Elbows pinned at your sides, no body swing — if you're swinging, the weight is too heavy. Left arm is currently weaker than right, which is normal and will even out over time. Start at 4 kg both arms, all 3 sets, strict form only." },
   ],
   core: [
     { name: "Dead Bug", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow and controlled is everything here." },
@@ -1062,23 +1097,79 @@ const dayMeta = {
   core: { label: 'Core & Conditioning', sub: 'Stability, Rotation & Lower Back', emoji: '🧘' },
 };
 
-// ── State ──
+const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day', core: 'Core & Conditioning' };
+
+// ── localStorage persistence ──
+const STORAGE_KEY = 'gymplan_state';
+const WEEK_KEY = 'gymplan_week';
+
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(WEEK_KEY, JSON.stringify(weekCompleted));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const savedWeek = JSON.parse(localStorage.getItem(WEEK_KEY));
+
+    if (savedState) {
+      ['legs','push','pull','core'].forEach(day => {
+        // Build a map of saved state keyed by exercise name
+        const savedByName = {};
+        if (savedState[day]) {
+          Object.values(savedState[day]).forEach(s => {
+            if (s.name) savedByName[s.name] = s;
+          });
+          // Backwards compat: index-based saves without name field
+          Object.entries(savedState[day]).forEach(([idx, s]) => {
+            if (!s.name && data[day][idx]) {
+              savedByName[data[day][idx].name] = s;
+            }
+          });
+        }
+        // Merge: preserve saved state for known exercises, default for new ones
+        data[day].forEach((ex, i) => {
+          const saved = savedByName[ex.name];
+          if (saved) {
+            state[day][i] = {
+              name: ex.name,
+              done: saved.done || false,
+              sets: saved.sets || ex.sets,
+              weight: saved.weight || ex.weight,
+              sessionNote: saved.sessionNote || ''
+            };
+          }
+        });
+      });
+    }
+
+    if (savedWeek) {
+      Object.assign(weekCompleted, savedWeek);
+    }
+  } catch(e) {}
+}
+
+// ── State initialisation ──
 const state = {};
+const weekCompleted = { legs: false, push: false, pull: false, core: false };
+
 ['legs','push','pull','core'].forEach(day => {
   state[day] = {};
-  data[day].forEach((_, i) => {
-    state[day][i] = { done: false, sets: data[day][i].sets, weight: data[day][i].weight, sessionNote: '' };
+  data[day].forEach((ex, i) => {
+    state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
   });
 });
 
-// Track which workouts have been marked "session complete" this week
-const weekCompleted = { legs: false, push: false, pull: false, core: false };
+loadFromStorage();
 
 // ── Week helpers ──
 function getMondayOfWeek(d) {
   const date = new Date(d);
-  const day = date.getDay(); // 0=Sun
-  const diff = (day === 0) ? -6 : 1 - day; // shift to Monday
+  const day = date.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
   date.setDate(date.getDate() + diff);
   date.setHours(0,0,0,0);
   return date;
@@ -1096,25 +1187,18 @@ function getWeekLabel() {
 // ── Dashboard ──
 function renderDashboard() {
   document.getElementById('dashboard-week-label').textContent = getWeekLabel();
-
   const days = ['legs','push','pull','core'];
   const completedCount = days.filter(d => weekCompleted[d]).length;
-
   const container = document.getElementById('dashboard-cards');
-
-  // Week summary banner
   const dots = days.map(d =>
     `<div class="dash-week-dot${weekCompleted[d] ? ' filled' : ''}"></div>`
   ).join('');
-
-  const messages = ['Let\'s go!', 'Good start!', 'Halfway there!', 'Three down!', 'Full week! 🎉'];
-  const msg = messages[completedCount];
-
+  const messages = ["Let's go!", 'Good start!', 'Halfway there!', 'Three down!', 'Full week! 🎉'];
   container.innerHTML = `
     <div class="dash-week-summary">
       <div>
         <div class="dash-week-count">${completedCount}<span style="font-size:1.2rem;opacity:0.5">/4</span></div>
-        <div class="dash-week-label">${msg}</div>
+        <div class="dash-week-label">${messages[completedCount]}</div>
       </div>
       <div class="dash-week-dots">${dots}</div>
     </div>
@@ -1124,18 +1208,12 @@ function renderDashboard() {
     const pct = Math.round((doneExs / total) * 100);
     const isDone = weekCompleted[day];
     const color = `var(--${day})`;
-
     let progressLine = '';
     if (!isDone && doneExs > 0) {
-      progressLine = `
-        <div class="dash-mini-bar-wrap">
-          <div class="dash-mini-bar-fill" style="width:${pct}%; background:${color}"></div>
-        </div>`;
+      progressLine = `<div class="dash-mini-bar-wrap"><div class="dash-mini-bar-fill" style="width:${pct}%; background:${color}"></div></div>`;
     }
-
     const statusContent = isDone ? '✓' : (doneExs > 0 ? `${doneExs}/${total}` : '');
-    const statusStyle = isDone ? '' : `font-size:0.55rem; color:var(--muted);`;
-
+    const statusStyle = isDone ? '' : 'font-size:0.55rem; color:var(--muted);';
     return `
       <div class="dash-workout-card${isDone ? ' dash-done' : ''}" onclick="goToWorkout('${day}')">
         <div class="dash-color-bar" style="background:${color}"></div>
@@ -1171,10 +1249,11 @@ function executeReset() {
   ['legs','push','pull','core'].forEach(day => {
     weekCompleted[day] = false;
     data[day].forEach((ex, i) => {
-      state[day][i] = { done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
+      state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
     });
     renderExercises(day);
   });
+  saveToStorage();
   closeResetModal();
   renderDashboard();
 }
@@ -1230,13 +1309,14 @@ function renderExercises(day) {
 
 function updateState(day, i, field, val) {
   state[day][i][field] = val;
+  saveToStorage();
 }
 
 function toggleDone(day, i) {
   state[day][i].done = !state[day][i].done;
-  const card = document.getElementById(`card-${day}-${i}`);
-  card.classList.toggle('done', state[day][i].done);
+  document.getElementById(`card-${day}-${i}`).classList.toggle('done', state[day][i].done);
   renderProgress(day);
+  saveToStorage();
 }
 
 function renderProgress(day) {
@@ -1245,29 +1325,25 @@ function renderProgress(day) {
   const total = data[day].length;
   const done = Object.values(state[day]).filter(s => s.done).length;
   const pct = Math.round((done / total) * 100);
-  const colorVar = `var(--${day})`;
   wrap.innerHTML = `
     <div class="progress-label">
       <span>Progress</span>
       <span>${done} / ${total} exercises</span>
     </div>
     <div class="progress-bar-wrap">
-      <div class="progress-bar-fill" style="width:${pct}%; background:${colorVar}"></div>
+      <div class="progress-bar-fill" style="width:${pct}%; background:var(--${day})"></div>
     </div>
   `;
 }
 
 function toggleEx(mainEl) {
   const card = mainEl.closest('.exercise-card');
-  const body = card.querySelector('.ex-body');
-  const chevron = card.querySelector('.ex-chevron');
-  body.classList.toggle('open');
-  chevron.classList.toggle('chevron-open');
+  card.querySelector('.ex-body').classList.toggle('open');
+  card.querySelector('.ex-chevron').classList.toggle('chevron-open');
 }
 
 function toggleExById(bodyId, chevron) {
-  const body = document.getElementById(bodyId);
-  body.classList.toggle('open');
+  document.getElementById(bodyId).classList.toggle('open');
   chevron.classList.toggle('chevron-open');
 }
 
@@ -1283,63 +1359,19 @@ function showPage(day, btn) {
 
 function toggleWarmup(header) {
   const body = header.nextElementSibling;
-  const chevron = header.querySelector('.chevron');
   body.classList.toggle('open');
-  chevron.classList.toggle('chevron-open');
+  header.querySelector('.chevron').classList.toggle('chevron-open');
 }
 
-// ── Summary ──
-const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day', core: 'Core & Conditioning' };
-
-function buildSummaryText(day, note) {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const exercises = data[day];
-  const total = exercises.length;
-  const doneCount = exercises.filter((_, i) => state[day][i].done).length;
-
-  let lines = [];
-  lines.push(`SESSION LOG — ${dayLabels[day].toUpperCase()}`);
-  lines.push(`Date: ${dateStr}`);
-  lines.push(`Completed: ${doneCount}/${total} exercises`);
-  lines.push('');
-  lines.push('EXERCISES:');
-
-  exercises.forEach((ex, i) => {
-    const s = state[day][i];
-    const status = s.done ? '✓' : '○';
-    lines.push(`${status} ${ex.name}`);
-    lines.push(`   Sets/Reps: ${s.sets}`);
-    lines.push(`   Weight: ${s.weight}`);
-    if (s.sessionNote && s.sessionNote.trim()) {
-      lines.push(`   My note: ${s.sessionNote.trim()}`);
-    }
-  });
-
-  if (note && note.trim()) {
-    lines.push('');
-    lines.push('NOTES FROM SESSION:');
-    lines.push(note.trim());
-  }
-
-  lines.push('');
-  lines.push('---');
-  lines.push('Please review this log and let me know:');
-  lines.push('1. Whether I should adjust any weights or reps for next time');
-  lines.push('2. Any form tips to keep in mind based on what I logged');
-  lines.push('3. If my progress looks on track');
-
-  return lines.join('\n');
-}
-
+// ── Google Sheets ──
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyN7Htap2Yo3OXdH2C6FCWsvyZcl8exx3QeytCyxwaY7kERXer8-AkdOeK9UYLBH9x0VA/exec';
 
 function postToSheets(day, sessionNote) {
+  if (!document.getElementById('send-to-sheets').checked) return;
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const exercises = data[day];
   const doneCount = exercises.filter((_, i) => state[day][i].done).length;
-
   const payload = {
     date: dateStr,
     day: dayLabels[day],
@@ -1354,7 +1386,6 @@ function postToSheets(day, sessionNote) {
       sessionNote: state[day][i].sessionNote || ''
     }))
   };
-
   fetch(SHEETS_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -1363,14 +1394,43 @@ function postToSheets(day, sessionNote) {
   }).catch(err => console.warn('Sheets sync failed:', err));
 }
 
+// ── Summary ──
+function buildSummaryText(day, note) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const exercises = data[day];
+  const doneCount = exercises.filter((_, i) => state[day][i].done).length;
+  let lines = [
+    `SESSION LOG — ${dayLabels[day].toUpperCase()}`,
+    `Date: ${dateStr}`,
+    `Completed: ${doneCount}/${exercises.length} exercises`,
+    '', 'EXERCISES:'
+  ];
+  exercises.forEach((ex, i) => {
+    const s = state[day][i];
+    lines.push(`${s.done ? '✓' : '○'} ${ex.name}`);
+    lines.push(`   Sets/Reps: ${s.sets}`);
+    lines.push(`   Weight: ${s.weight}`);
+    if (s.sessionNote && s.sessionNote.trim()) lines.push(`   My note: ${s.sessionNote.trim()}`);
+  });
+  if (note && note.trim()) {
+    lines.push('', 'NOTES FROM SESSION:', note.trim());
+  }
+  lines.push('', '---', 'Please review this log and let me know:',
+    '1. Whether I should adjust any weights or reps for next time',
+    '2. Any form tips to keep in mind based on what I logged',
+    '3. If my progress looks on track');
+  return lines.join('\n');
+}
+
 function openSummary(day) {
-  // Mark workout as completed for the week when summary is opened
   weekCompleted[day] = true;
+  saveToStorage();
   currentSummaryDay = day;
   document.getElementById('session-note').value = '';
+  document.getElementById('send-to-sheets').checked = true;
   document.getElementById('summary-text').textContent = buildSummaryText(day, '');
   document.getElementById('modal-overlay').classList.add('open');
-  // Post to Google Sheets
   postToSheets(day, '');
 }
 
@@ -1378,7 +1438,6 @@ function regenerateSummary() {
   if (!currentSummaryDay) return;
   const note = document.getElementById('session-note').value;
   document.getElementById('summary-text').textContent = buildSummaryText(currentSummaryDay, note);
-  // Re-sync with updated session note
   postToSheets(currentSummaryDay, note);
 }
 
@@ -1396,10 +1455,7 @@ function copyToClipboard() {
     const btn = document.getElementById('btn-copy');
     btn.textContent = '✓ Copied!';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Copy to clipboard';
-      btn.classList.remove('copied');
-    }, 2200);
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2200);
   });
 }
 
