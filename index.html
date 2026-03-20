@@ -810,6 +810,18 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    border-radius: 8px;
+    padding: 6px 2px;
+    transition: background 0.2s;
+  }
+
+  .dash-cal-day.has-activity {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
+  .dash-cal-day.today.has-activity {
+    border-color: var(--ink);
   }
 
   .dash-cal-day-label {
@@ -1265,8 +1277,9 @@ function renderDashboard() {
             log.pull ? '💪' : null,
           ].filter(Boolean);
           const hasCore = log.core;
+          const hasActivity = icons.length > 0 || hasCore;
           return `
-            <div class="dash-cal-day${isToday ? ' today' : ''}">
+            <div class="dash-cal-day${isToday ? ' today' : ''}${hasActivity ? ' has-activity' : ''}">
               <div class="dash-cal-day-label">${dayNames[i]}</div>
               <div class="dash-cal-icons">
                 ${icons.map(e => `<span class="dash-cal-icon">${e}</span>`).join('')}
