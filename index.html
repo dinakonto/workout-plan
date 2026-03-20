@@ -781,6 +781,74 @@
   }
 
   .dash-reset-btn:hover { border-color: var(--muted); color: var(--ink); }
+
+  /* ── Weekly calendar ── */
+  .dash-calendar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .dash-calendar-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .dash-cal-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .dash-cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dash-cal-day-label {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .dash-cal-day.today .dash-cal-day-label {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .dash-cal-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-height: 24px;
+  }
+
+  .dash-cal-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .dash-cal-core-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--core);
+  }
+
+  .dash-cal-today-line {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--ink);
+    margin-top: 2px;
+  }
 </style>
 </head>
 <body>
@@ -793,9 +861,9 @@
 <div class="tab-bar">
   <button class="tab active" data-day="dashboard" onclick="showPage('dashboard', this)">🏠 This Week</button>
   <button class="tab" data-day="legs" onclick="showPage('legs', this)">🦵 Legs</button>
-  <button class="tab" data-day="push" onclick="showPage('push', this)">💪 Push</button>
-  <button class="tab" data-day="pull" onclick="showPage('pull', this)">🏋️ Pull</button>
-  <button class="tab" data-day="core" onclick="showPage('core', this)">🧘 Core</button>
+  <button class="tab" data-day="push" onclick="showPage('push', this)">🏋️ Push</button>
+  <button class="tab" data-day="pull" onclick="showPage('pull', this)">💪 Pull</button>
+  <button class="tab" data-day="home" onclick="showPage('home', this)">🧘 Core</button>
   <button class="tab" data-day="tips" onclick="showPage('tips', this)">📋 Tips</button>
 </div>
 
@@ -948,45 +1016,22 @@
   <button class="summary-btn" onclick="openSummary('pull')">📋 End Session & Get Summary</button>
 </div>
 
-<!-- CORE -->
-<div class="page" id="page-core">
+<!-- HOME CORE -->
+<div class="page" id="page-home">
   <div class="day-title">
     <div class="day-dot" style="background:var(--core)"></div>
     <div>
-      <h2>Core & Conditioning</h2>
-      <p>Stability, Rotation & Lower Back</p>
+      <h2>Core Routine</h2>
+      <p>At home · 10–15 min</p>
     </div>
   </div>
 
-  <div id="progress-core"></div>
-
-  <div class="section-label">Warm-Up (~10 min)</div>
-  <div class="warmup-card">
-    <div class="warmup-header" onclick="toggleWarmup(this)">
-      <div class="dot" style="background:var(--core)"></div>
-      <h3>5 min rower or ski erg, then movement prep</h3>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="warmup-body">
-      <div class="warmup-step"><strong>Cat-Cow</strong><span>10 reps</span></div>
-      <div class="warmup-step"><strong>Hip 90/90 Stretch</strong><span>60 seconds each side — sit on floor, both legs at 90°, rotate between them</span></div>
-      <div class="warmup-step"><strong>Glute Bridges</strong><span>15 reps</span></div>
-      <div class="warmup-step"><strong>World's Greatest Stretch</strong><span>5 each side — lunge with thoracic rotation. Look it up on YouTube, it's worth it!</span></div>
-    </div>
-  </div>
+  <div id="progress-home"></div>
 
   <div class="section-label">Exercises</div>
-  <div id="core-exercises"></div>
+  <div id="home-exercises"></div>
 
-  <div class="section-label">Notes</div>
-  <div class="key-principles">
-    <h3>Today's focus</h3>
-    <div class="principle"><strong>The "glue" day</strong>This work directly protects your lower back and translates to better performance in soccer and climbing.</div>
-    <div class="principle"><strong>Dead Bug</strong>Go slow. The point is control — if your lower back lifts off the floor, you've gone too far.</div>
-    <div class="principle"><strong>Pallof Press</strong>Resist the rotation — don't let the cable pull you. The tension is the exercise.</div>
-  </div>
-
-  <button class="summary-btn" onclick="openSummary('core')">📋 End Session & Get Summary</button>
+  <button class="summary-btn" style="background:var(--core)" onclick="markCoreDone()">✓ Mark as Done for Today</button>
 </div>
 
 <!-- TIPS -->
@@ -1080,33 +1125,34 @@ const data = {
     { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "40 kg assistance", note: "Stick to the same assistance weight across all 3 sets. Full range of motion — start from a dead hang. When all three sets feel comfortable, drop to 35 kg assistance." },
     { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "3 kg each", note: "Start at 3 kg for all 3 sets and focus on strict form — elbows pinned at your sides, no body swing. Biceps will be fatigued from earlier exercises so don't be surprised if this feels harder than the weight suggests. Left arm weakness will even out with consistent training. Once 3 × 12 feels solid on both arms, move to 4 kg." },
   ],
-  core: [
-    { name: "Dead Bug", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow and controlled is everything here. 🏠 Home: no changes needed." },
-    { name: "Pallof Press", sets: "3 × 12 each side", weight: "~10–15 kg / band", note: "Stand side-on to the cable. Press out and resist the rotation — don't let the cable pull you. The tension IS the exercise. 🏠 Home: anchor a resistance band at chest height around something sturdy (door handle, table leg) and perform exactly the same movement." },
-    { name: "Single-Leg Glute Bridge", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, one foot on the floor. Drive hips up through your heel. Good bridge between legs day and core work. 🏠 Home: no changes needed." },
-    { name: "Woodchop", sets: "3 × 12 each side", weight: "~10 kg / 6 kg KB", note: "Rotational power — great for soccer. Start high on one side, pull diagonally down across your body. Control both directions. 🏠 Home: hold a 6 kg kettlebell with both hands and perform the same diagonal chopping movement." },
-    { name: "Plank", sets: "3 × 30–45 sec", weight: "Bodyweight", note: "Don't let your hips drop or pike up. Squeeze your glutes and core. Breathe. 🏠 Home: no changes needed." },
-    { name: "Row", sets: "3 × 12", weight: "Body at ~45° / band", note: "🏋️ Gym: TRX row — the more horizontal your body, the harder it is. Squeeze shoulder blades together at the top. 🏠 Home: anchor a resistance band at chest height, lean back to ~45° and row, keeping elbows close and squeezing shoulder blades at the end of each rep." },
-  ]
 };
+
+// Home core routine — simple checklist, no weights
+const homeData = [
+  { name: "Dead Bug", reps: "3 × 10 each side", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow and controlled is everything here." },
+  { name: "Single-Leg Glute Bridge", reps: "3 × 10 each side", note: "Lie on your back, one foot on the floor. Drive hips up through your heel. Pause and squeeze at the top." },
+  { name: "Band Pallof Press", reps: "3 × 12 each side", note: "Anchor resistance band at chest height around something sturdy. Stand side-on, press out and resist the rotation — don't let the band pull you. The tension IS the exercise." },
+  { name: "Plank", reps: "3 × 30–45 sec", note: "Don't let your hips drop or pike up. Squeeze your glutes and core. Breathe." },
+];
 
 const dayMeta = {
   legs: { label: 'Legs Day', sub: 'Glutes & Knees', emoji: '🦵' },
-  push: { label: 'Push Day', sub: 'Chest, Shoulders & Triceps', emoji: '💪' },
-  pull: { label: 'Pull Day', sub: 'Back, Biceps & Rear Delts', emoji: '🏋️' },
-  core: { label: 'Core & Conditioning', sub: 'Stability, Rotation & Lower Back', emoji: '🧘' },
+  push: { label: 'Push Day', sub: 'Chest, Shoulders & Triceps', emoji: '🏋️' },
+  pull: { label: 'Pull Day', sub: 'Back, Biceps & Rear Delts', emoji: '💪' },
 };
 
-const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day', core: 'Core & Conditioning' };
+const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day' };
 
-// ── localStorage persistence ──
+// ── localStorage ──
 const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
+const CALENDAR_KEY = 'gymplan_calendar';
 
 function saveToStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     localStorage.setItem(WEEK_KEY, JSON.stringify(weekCompleted));
+    localStorage.setItem(CALENDAR_KEY, JSON.stringify(calendarLog));
   } catch(e) {}
 }
 
@@ -1114,49 +1160,46 @@ function loadFromStorage() {
   try {
     const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const savedWeek = JSON.parse(localStorage.getItem(WEEK_KEY));
+    const savedCal = JSON.parse(localStorage.getItem(CALENDAR_KEY));
 
     if (savedState) {
-      ['legs','push','pull','core'].forEach(day => {
-        // Build a map of saved state keyed by exercise name
+      ['legs','push','pull'].forEach(day => {
         const savedByName = {};
         if (savedState[day]) {
-          Object.values(savedState[day]).forEach(s => {
-            if (s.name) savedByName[s.name] = s;
-          });
-          // Backwards compat: index-based saves without name field
+          Object.values(savedState[day]).forEach(s => { if (s.name) savedByName[s.name] = s; });
           Object.entries(savedState[day]).forEach(([idx, s]) => {
-            if (!s.name && data[day][idx]) {
-              savedByName[data[day][idx].name] = s;
-            }
+            if (!s.name && data[day][idx]) savedByName[data[day][idx].name] = s;
           });
         }
-        // Merge: preserve saved state for known exercises, default for new ones
         data[day].forEach((ex, i) => {
           const saved = savedByName[ex.name];
           if (saved) {
-            state[day][i] = {
-              name: ex.name,
-              done: saved.done || false,
-              sets: saved.sets || ex.sets,
-              weight: saved.weight || ex.weight,
-              sessionNote: saved.sessionNote || ''
-            };
+            state[day][i] = { name: ex.name, done: saved.done || false, sets: saved.sets || ex.sets, weight: saved.weight || ex.weight, sessionNote: saved.sessionNote || '' };
           }
         });
       });
+      // Home state
+      if (savedState.home) {
+        Object.entries(savedState.home).forEach(([i, s]) => {
+          if (homeState[i] !== undefined) homeState[i] = { ...homeState[i], done: s.done || false };
+        });
+      }
     }
-
-    if (savedWeek) {
-      Object.assign(weekCompleted, savedWeek);
-    }
+    if (savedWeek) Object.assign(weekCompleted, savedWeek);
+    if (savedCal) Object.assign(calendarLog, savedCal);
   } catch(e) {}
 }
 
-// ── State initialisation ──
+// ── State ──
 const state = {};
-const weekCompleted = { legs: false, push: false, pull: false, core: false };
+const weekCompleted = { legs: false, push: false, pull: false };
+// calendarLog: { 'YYYY-MM-DD': { legs, push, pull, core } }
+const calendarLog = {};
 
-['legs','push','pull','core'].forEach(day => {
+const homeState = {};
+homeData.forEach((ex, i) => { homeState[i] = { name: ex.name, done: false }; });
+
+['legs','push','pull'].forEach(day => {
   state[day] = {};
   data[day].forEach((ex, i) => {
     state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
@@ -1165,7 +1208,12 @@ const weekCompleted = { legs: false, push: false, pull: false, core: false };
 
 loadFromStorage();
 
-// ── Week helpers ──
+// ── Date helpers ──
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 function getMondayOfWeek(d) {
   const date = new Date(d);
   const day = date.getDay();
@@ -1175,34 +1223,61 @@ function getMondayOfWeek(d) {
   return date;
 }
 
+function getWeekDays() {
+  const mon = getMondayOfWeek(new Date());
+  return Array.from({length: 7}, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d;
+  });
+}
+
 function getWeekLabel() {
-  const now = new Date();
-  const mon = getMondayOfWeek(now);
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
+  const days = getWeekDays();
   const fmt = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-  return `${fmt(mon)} – ${fmt(sun)}`;
+  return `${fmt(days[0])} – ${fmt(days[6])}`;
+}
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 // ── Dashboard ──
 function renderDashboard() {
   document.getElementById('dashboard-week-label').textContent = getWeekLabel();
-  const days = ['legs','push','pull','core'];
-  const completedCount = days.filter(d => weekCompleted[d]).length;
+  const gymDays = ['legs','push','pull'];
   const container = document.getElementById('dashboard-cards');
-  const dots = days.map(d =>
-    `<div class="dash-week-dot${weekCompleted[d] ? ' filled' : ''}"></div>`
-  ).join('');
-  const messages = ["Let's go!", 'Good start!', 'Halfway there!', 'Three down!', 'Full week! 🎉'];
+  const today = todayKey();
+  const weekDays = getWeekDays();
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
   container.innerHTML = `
-    <div class="dash-week-summary">
-      <div>
-        <div class="dash-week-count">${completedCount}<span style="font-size:1.2rem;opacity:0.5">/4</span></div>
-        <div class="dash-week-label">${messages[completedCount]}</div>
+    <div class="dash-calendar">
+      <div class="dash-calendar-label">This week</div>
+      <div class="dash-cal-row">
+        ${weekDays.map((d, i) => {
+          const key = dateKey(d);
+          const log = calendarLog[key] || {};
+          const isToday = key === today;
+          const icons = [
+            log.legs ? '🦵' : null,
+            log.push ? '🏋️' : null,
+            log.pull ? '💪' : null,
+          ].filter(Boolean);
+          const hasCore = log.core;
+          return `
+            <div class="dash-cal-day${isToday ? ' today' : ''}">
+              <div class="dash-cal-day-label">${dayNames[i]}</div>
+              <div class="dash-cal-icons">
+                ${icons.map(e => `<span class="dash-cal-icon">${e}</span>`).join('')}
+                ${hasCore ? '<div class="dash-cal-core-dot"></div>' : ''}
+                ${isToday && icons.length === 0 && !hasCore ? '<div class="dash-cal-today-line"></div>' : ''}
+              </div>
+            </div>`;
+        }).join('')}
       </div>
-      <div class="dash-week-dots">${dots}</div>
     </div>
-  ` + days.map(day => {
+  ` + gymDays.map(day => {
     const total = data[day].length;
     const doneExs = Object.values(state[day]).filter(s => s.done).length;
     const pct = Math.round((doneExs / total) * 100);
@@ -1246,19 +1321,24 @@ function handleResetOverlayClick(e) {
 }
 
 function executeReset() {
-  ['legs','push','pull','core'].forEach(day => {
+  ['legs','push','pull'].forEach(day => {
     weekCompleted[day] = false;
     data[day].forEach((ex, i) => {
       state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
     });
     renderExercises(day);
   });
+  // Clear home state
+  homeData.forEach((_, i) => { homeState[i].done = false; });
+  renderHomeExercises();
+  // Clear calendar
+  Object.keys(calendarLog).forEach(k => delete calendarLog[k]);
   saveToStorage();
   closeResetModal();
   renderDashboard();
 }
 
-// ── Exercises ──
+// ── Gym exercises ──
 let currentSummaryDay = null;
 
 function renderExercises(day) {
@@ -1336,6 +1416,70 @@ function renderProgress(day) {
   `;
 }
 
+// ── Home core exercises ──
+function renderHomeExercises() {
+  const container = document.getElementById('home-exercises');
+  if (!container) return;
+  const allDone = Object.values(homeState).every(s => s.done);
+  container.innerHTML = homeData.map((ex, i) => `
+    <div class="exercise-card${homeState[i].done ? ' done' : ''}" id="card-home-${i}">
+      <div class="ex-header">
+        <div class="ex-check" onclick="toggleHomeDone(${i})" title="Mark complete">✓</div>
+        <div class="ex-main" onclick="toggleExById('body-home-${i}', this.closest('.exercise-card').querySelector('.ex-chevron'))">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta">
+            <span class="tag highlight">${ex.reps}</span>
+          </div>
+        </div>
+        <span class="ex-chevron" onclick="toggleExById('body-home-${i}', this)">▼</span>
+      </div>
+      <div class="ex-body" id="body-home-${i}">
+        <div class="note-label">Notes</div>
+        ${ex.note}
+      </div>
+    </div>
+  `).join('');
+  renderHomeProgress();
+}
+
+function toggleHomeDone(i) {
+  homeState[i].done = !homeState[i].done;
+  document.getElementById(`card-home-${i}`).classList.toggle('done', homeState[i].done);
+  renderHomeProgress();
+  saveToStorage();
+}
+
+function renderHomeProgress() {
+  const wrap = document.getElementById('progress-home');
+  if (!wrap) return;
+  const total = homeData.length;
+  const done = Object.values(homeState).filter(s => s.done).length;
+  const pct = Math.round((done / total) * 100);
+  wrap.innerHTML = `
+    <div class="progress-label">
+      <span>Progress</span>
+      <span>${done} / ${total} exercises</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width:${pct}%; background:var(--core)"></div>
+    </div>
+  `;
+}
+
+function markCoreDone() {
+  const key = todayKey();
+  if (!calendarLog[key]) calendarLog[key] = {};
+  calendarLog[key].core = true;
+  // Reset checkboxes for next time
+  homeData.forEach((_, i) => { homeState[i].done = false; });
+  renderHomeExercises();
+  saveToStorage();
+  // Brief confirmation
+  const btn = document.querySelector('#page-home .summary-btn');
+  btn.textContent = '✓ Logged!';
+  setTimeout(() => { btn.textContent = '✓ Mark as Done for Today'; }, 2000);
+}
+
 function toggleEx(mainEl) {
   const card = mainEl.closest('.exercise-card');
   card.querySelector('.ex-body').classList.toggle('open');
@@ -1344,10 +1488,11 @@ function toggleEx(mainEl) {
 
 function toggleExById(bodyId, chevron) {
   document.getElementById(bodyId).classList.toggle('open');
-  chevron.classList.toggle('chevron-open');
+  if (chevron) chevron.classList.toggle('chevron-open');
 }
 
-['legs','push','pull','core'].forEach(renderExercises);
+['legs','push','pull'].forEach(renderExercises);
+renderHomeExercises();
 
 function showPage(day, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1413,9 +1558,7 @@ function buildSummaryText(day, note) {
     lines.push(`   Weight: ${s.weight}`);
     if (s.sessionNote && s.sessionNote.trim()) lines.push(`   My note: ${s.sessionNote.trim()}`);
   });
-  if (note && note.trim()) {
-    lines.push('', 'NOTES FROM SESSION:', note.trim());
-  }
+  if (note && note.trim()) lines.push('', 'NOTES FROM SESSION:', note.trim());
   lines.push('', '---', 'Please review this log and let me know:',
     '1. Whether I should adjust any weights or reps for next time',
     '2. Any form tips to keep in mind based on what I logged',
@@ -1424,6 +1567,10 @@ function buildSummaryText(day, note) {
 }
 
 function openSummary(day) {
+  // Log this day to calendar
+  const key = todayKey();
+  if (!calendarLog[key]) calendarLog[key] = {};
+  calendarLog[key][day] = true;
   weekCompleted[day] = true;
   saveToStorage();
   currentSummaryDay = day;
