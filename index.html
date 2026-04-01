@@ -1127,7 +1127,7 @@ const data = {
     { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "20 kg total", note: "Easier to control than barbell — great starting point. Keep elbows at about 45° from your body." },
     { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "5 kg each", note: "Seated removes lower back strain. Press straight up, don't flare elbows too wide. Keep your head and upper back in contact with the pad throughout — don't let your head drift forward or crane your neck. Think tall spine, head resting back naturally. Left/right imbalance is normal and will even out with consistent training." },
     { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lateral raises are deceptively hard — light weight is correct and normal. Lead with your elbow rather than your wrist, and stop at shoulder height (going higher recruits the trap instead). Back to 3 × 10 after consolidating at 3 × 8 — move to 5 kg once all reps are consistently clean." },
-    { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "7.5 kg", note: "Keep elbows pinned tight to your sides — if they flare out, the tricep loses leverage. Start from roughly 90° at the elbow and focus on fully extending the arm at the bottom of each rep. Make sure you're using a straight bar or rope, not an attachment forcing an awkward wrist angle." },
+    { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides — if they flare out, the tricep loses leverage. Start from roughly 90° at the elbow and focus on fully extending the arm at the bottom of each rep. Make sure you're using a straight bar or rope, not an attachment forcing an awkward wrist angle." },
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso — not fully flared out (stresses the shoulder) nor fully tucked back (becomes a tricep exercise). Think arrow shape with your body, not a T. Body in a straight line throughout. Once this feels easy, lower the incline height." },
   ],
   pull: [
@@ -1159,20 +1159,25 @@ const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day' };
 const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
+const VERSION_KEY = 'gymplan_version';
+const APP_VERSION = '2.1'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     localStorage.setItem(WEEK_KEY, JSON.stringify(weekCompleted));
     localStorage.setItem(CALENDAR_KEY, JSON.stringify(calendarLog));
+    localStorage.setItem(VERSION_KEY, APP_VERSION);
   } catch(e) {}
 }
 
 function loadFromStorage() {
   try {
+    const savedVersion = localStorage.getItem(VERSION_KEY);
     const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const savedWeek = JSON.parse(localStorage.getItem(WEEK_KEY));
     const savedCal = JSON.parse(localStorage.getItem(CALENDAR_KEY));
+    const versionMatch = savedVersion === APP_VERSION;
 
     if (savedState) {
       ['legs','push','pull'].forEach(day => {
@@ -1186,7 +1191,14 @@ function loadFromStorage() {
         data[day].forEach((ex, i) => {
           const saved = savedByName[ex.name];
           if (saved) {
-            state[day][i] = { name: ex.name, done: saved.done || false, sets: saved.sets || ex.sets, weight: saved.weight || ex.weight, sessionNote: saved.sessionNote || '' };
+            state[day][i] = {
+              name: ex.name,
+              done: saved.done || false,
+              // Only preserve edited sets/weight if version matches — otherwise use code defaults
+              sets: versionMatch ? (saved.sets || ex.sets) : ex.sets,
+              weight: versionMatch ? (saved.weight || ex.weight) : ex.weight,
+              sessionNote: saved.sessionNote || ''
+            };
           }
         });
       });
@@ -1340,6 +1352,11 @@ function executeReset() {
       state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
     });
     renderExercises(day);
+    // Clear any session note textareas still in the DOM
+    data[day].forEach((_, i) => {
+      const ta = document.getElementById(`exnote-${day}-${i}`);
+      if (ta) ta.value = '';
+    });
   });
   // Clear home state
   homeData.forEach((_, i) => { homeState[i].done = false; });
