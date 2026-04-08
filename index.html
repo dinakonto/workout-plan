@@ -1131,11 +1131,11 @@ const data = {
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso — not fully flared out (stresses the shoulder) nor fully tucked back (becomes a tricep exercise). Think arrow shape with your body, not a T. Body in a straight line throughout. Once this feels easy, lower the incline height." },
   ],
   pull: [
-    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "30 kg", note: "Pull to upper chest, lean back slightly. Drive your elbows down toward your back pockets rather than just pulling your hands down — this tends to unlock the last few centimetres of range. Start each rep from a full dead hang. Rest at least 90 seconds between sets." },
-    { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus, not up to your collarbone. Elbows travel close to your sides and finish pointing back behind you, not flared wide. Think elbows to back pockets. Pulling too high recruits the upper traps and shoulders instead of lats and rhomboids. Controlled return without rounding forward. Rest at least 90 seconds between sets." },
-    { name: "Cable Face Pull", sets: "3 × 15", weight: "7.5 kg", note: "Elbows high and wide (above shoulder height), pull towards your forehead not your chin, and squeeze at the end. Technique is feeling grooved — keep building." },
-    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "35 kg assistance", note: "Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 30 kg assistance." },
-    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "4 kg each", note: "Elbows pinned at your sides, no body swing. Don't lock out to a fully straight elbow at the bottom — lower to about 10–15° of remaining bend to keep tension on the bicep and reduce stress on the elbow joint. If you feel strain in the forearm when extending all the way down, this is why. If it persists, mention to your PT." },
+    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "25 kg", note: "Pull to upper chest, lean back slightly. Drive your elbows down toward your back pockets rather than just pulling your hands down — this tends to unlock the last few centimetres of range. Start each rep from a full dead hang. Rest at least 90 seconds between sets. Recovery week at 25 kg — return to 30 kg next session." },
+    { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus, not up to your collarbone. Elbows travel close to your sides and finish pointing back behind you, not flared wide. Think elbows to back pockets. Controlled return without rounding forward. Rest at least 90 seconds between sets." },
+    { name: "Cable Face Pull", sets: "3 × 15", weight: "7.5 kg", note: "Elbows high and wide (above shoulder height), pull towards your forehead not your chin, and squeeze at the end. Split stance (one foot forward) is fine and gives better stability — core still engaged to resist rotation. Technique is feeling grooved — keep building." },
+    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "35 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 30 kg assistance." },
+    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "3 kg each", note: "Elbows pinned at your sides, no body swing. Keep wrist completely neutral throughout — don't let it rotate or bend under load. Stop 10–15° short of full extension. Persistent strain in the upper outer right forearm — flag to PT at next session and show them the movement. Drop to 3 kg until resolved." },
   ],
 };
 
@@ -1160,7 +1160,7 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '2.1'; // bump this when exercise defaults change
+const APP_VERSION = '2.2'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
