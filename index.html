@@ -1119,7 +1119,7 @@ const data = {
     { name: "MultiPower Squat", sets: "3 × 10", weight: "30 kg", note: "Treat the bar as a guide, not a crutch — squat as if it were a free barbell. Feet should be directly under or just slightly forward of the bar; if you're leaning back into the bar, your feet are too far forward. Lower to parallel, drive through heels, chest up, core braced throughout." },
     { name: "Leg Press", sets: "3 × 12", weight: "80 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest — thighs roughly parallel to the platform, shins roughly perpendicular. If the machine at its closest doesn't get you to 90°, flag to your PT." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "5 kg DB each hand", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Watch left knee tracking — make sure it doesn't drift inward on the lowering phase. A click on the outside of the left knee has been noted — flag to PT and monitor. Physio recommendation." },
-    { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "5 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Almost freestanding — use the wall only if needed. Once fully freestanding across all sets consistently, add weight. Physio recommendation." },
+    { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "5 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Balance consistently good — next session move to 7.5 kg if it holds. Physio recommendation." },
     { name: "Nordic Curl", sets: "3 × 5", weight: "Bodyweight", note: "Kneel on the lat pulldown seat facing away, hook feet under the knee pad. Slowly lower your body toward the floor by letting your knees extend — don't hinge at the hip. Catch with hands when you can no longer hold yourself, push back to start. Hamstring cramping sensation after sets is normal and expected — light stretching between sets is fine. Expect soreness for 24–48 hours after early sessions. Stay at 3 × 5 until this feels more controlled before adding reps." },
     { name: "Calf Raises", sets: "3 × 15", weight: "6 kg DB (one hand)", note: "Stand on a platform with heels off the edge for full range of motion. Hold a 6 kg dumbbell in one hand for added load. Switch hands each set." },
   ],
@@ -1131,11 +1131,11 @@ const data = {
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso — not fully flared out (stresses the shoulder) nor fully tucked back (becomes a tricep exercise). Think arrow shape with your body, not a T. Body in a straight line throughout. Once this feels easy, lower the incline height." },
   ],
   pull: [
-    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "27.5 kg", note: "Pull to upper chest, lean back slightly. Drive your elbows down toward your back pockets rather than just pulling your hands down. Start each rep from a full dead hang. Rest at least 90 seconds between sets. Full range of motion is more important than the weight — if range goes, drop the weight." },
+    { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "30 kg", note: "Pull to upper chest, lean back slightly. Drive your elbows down toward your back pockets rather than just pulling your hands down. Start each rep from a full dead hang. Rest at least 90 seconds between sets. Full range of motion is more important than the weight — if range goes, drop the weight." },
     { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus, not up to your collarbone. Elbows travel close to your sides and finish pointing back behind you, not flared wide. Think elbows to back pockets. Controlled return without rounding forward. Rest at least 90 seconds between sets." },
-    { name: "Cable Face Pull", sets: "3 × 15", weight: "10 kg", note: "Elbows high and wide (above shoulder height), pull towards your forehead not your chin, and squeeze at the end. Split stance (one foot forward) is fine and gives better stability — core still engaged to resist rotation." },
-    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "35 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 30 kg assistance." },
-    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "3 kg each", note: "Elbows pinned at your sides, no body swing. Keep wrist completely neutral throughout. Stop 10–15° short of full extension. Use a loose grip to reduce tension on the forearm flexor tendons. Forearm pain ongoing — raise with PT as soon as possible for hands-on assessment." },
+    { name: "Cable Face Pull", sets: "3 × 15", weight: "12.5 kg", note: "Elbows high and wide (above shoulder height), pull towards your forehead not your chin, and squeeze at the end. Split stance (one foot forward) for stability — core engaged to resist rotation." },
+    { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "30 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 25 kg assistance." },
+    { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "3 kg each", note: "Elbows pinned at your sides, no body swing. Keep wrist completely neutral throughout. Stop 10–15° short of full extension. Use a loose grip to reduce tension on the forearm tendons — this has been helping. Pain is still present; if it increases at any point stop and seek a GP referral to a physio." },
   ],
 };
 
@@ -1161,7 +1161,7 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '2.8'; // bump this when exercise defaults change
+const APP_VERSION = '2.9'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
