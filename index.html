@@ -861,13 +861,194 @@
     background: var(--ink);
     margin-top: 2px;
   }
+
+  /* ── Run colour ── */
+  :root { --run: #5a9e6f; }
+
+  /* ── New dashboard day cards ── */
+  .dash-week-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .dash-day-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.2s;
+  }
+
+  .dash-day-card.is-today {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+
+  .dash-day-card.is-done {
+    background: var(--done-bg);
+    border-color: var(--done-border);
+    opacity: 0.8;
+  }
+
+  .dash-day-card.is-rest {
+    opacity: 0.45;
+  }
+
+  .dash-day-card.is-clickable {
+    cursor: pointer;
+  }
+
+  .dash-day-card.is-clickable:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  .dash-day-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    width: 28px;
+    flex-shrink: 0;
+  }
+
+  .dash-day-card.is-today .dash-day-label {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .dash-day-color {
+    width: 4px;
+    border-radius: 3px;
+    align-self: stretch;
+    flex-shrink: 0;
+    min-height: 36px;
+  }
+
+  .dash-day-info { flex: 1; }
+
+  .dash-day-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .dash-day-sub {
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 3px;
+  }
+
+  .dash-day-run-data {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  .dash-day-status {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    border: 2px solid var(--border);
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  .dash-day-card.is-done .dash-day-status {
+    background: var(--push);
+    border-color: var(--push);
+    color: white;
+  }
+
+  .dash-day-mini-bar-wrap {
+    margin-top: 6px;
+    background: var(--border);
+    border-radius: 20px;
+    height: 3px;
+    overflow: hidden;
+  }
+
+  .dash-day-mini-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Run modal fields ── */
+  .run-fields { display: flex; flex-direction: column; gap: 14px; }
+
+  .run-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .run-field { display: flex; flex-direction: column; gap: 5px; }
+
+  .run-field-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .run-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+  }
+
+  .run-input:focus { border-color: var(--ink); }
+
+  .run-effort-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .run-effort-btn {
+    flex: 1;
+    padding: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .run-effort-btn.selected {
+    background: var(--run);
+    border-color: var(--run);
+    color: white;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <h1>My Gym Plan</h1>
-  <p>3–4 days/week · Strength & Conditioning</p>
+  <p>5–6 days/week · Strength & Conditioning</p>
 </header>
 
 <div class="tab-bar">
@@ -875,7 +1056,8 @@
   <button class="tab" data-day="legs" onclick="showPage('legs', this)">🦵 Legs</button>
   <button class="tab" data-day="push" onclick="showPage('push', this)">🏋️ Push</button>
   <button class="tab" data-day="pull" onclick="showPage('pull', this)">💪 Pull</button>
-  <button class="tab" data-day="home" onclick="showPage('home', this)">🧘 Core</button>
+  <button class="tab" data-day="core" onclick="showPage('core', this)">🧘 Core</button>
+  <button class="tab" data-day="home" onclick="showPage('home', this)">🏠 Core (Home)</button>
   <button class="tab" data-day="tips" onclick="showPage('tips', this)">📋 Tips</button>
 </div>
 
@@ -908,8 +1090,68 @@
       <p class="modal-note" style="margin-top:8px">Are you sure you want to reset?</p>
     </div>
     <div class="modal-footer">
-      <button class="btn-copy" style="background:#c87e7e" onclick="executeReset()">Yes, reset everything</button>
-      <button class="btn-dismiss" onclick="closeResetModal()">Cancel</button>
+      <div class="modal-footer-btns">
+        <button class="btn-copy" style="background:#c87e7e" onclick="executeReset()">Yes, reset everything</button>
+        <button class="btn-dismiss" onclick="closeResetModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RUN LOG MODAL -->
+<div class="modal-overlay" id="run-modal-overlay" onclick="handleRunOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Log Run</h2>
+      <button class="modal-close" onclick="closeRunModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="run-fields">
+        <div class="run-field-row">
+          <div class="run-field">
+            <div class="run-field-label">Distance (km)</div>
+            <input class="run-input" id="run-distance" type="number" step="0.1" placeholder="5.0" />
+          </div>
+          <div class="run-field">
+            <div class="run-field-label">Time (min)</div>
+            <input class="run-input" id="run-time" type="number" step="1" placeholder="30" />
+          </div>
+        </div>
+        <div class="run-field-row">
+          <div class="run-field">
+            <div class="run-field-label">Avg Pace (min/km)</div>
+            <input class="run-input" id="run-pace" type="text" placeholder="6:00" />
+          </div>
+          <div class="run-field">
+            <div class="run-field-label">Avg Heart Rate (bpm)</div>
+            <input class="run-input" id="run-hr" type="number" step="1" placeholder="145" />
+          </div>
+        </div>
+        <div class="run-field">
+          <div class="run-field-label">Perceived Effort</div>
+          <div class="run-effort-btns" id="run-effort-btns">
+            <button class="run-effort-btn" onclick="selectEffort(this, 'easy')">Easy</button>
+            <button class="run-effort-btn" onclick="selectEffort(this, 'moderate')">Moderate</button>
+            <button class="run-effort-btn" onclick="selectEffort(this, 'hard')">Hard</button>
+          </div>
+        </div>
+        <div class="run-field">
+          <div class="run-field-label">Notes (optional)</div>
+          <textarea class="session-note-input" id="run-note" placeholder="How did it feel? Anything to flag..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer-top">
+        <label class="sheets-toggle">
+          <input type="checkbox" id="run-send-to-sheets" checked>
+          <span>Save to Google Sheets</span>
+        </label>
+      </div>
+      <div class="modal-footer-btns">
+        <button class="btn-copy" style="background:var(--run)" id="run-save-btn" onclick="saveRun()">Save Run</button>
+        <button class="btn-dismiss" onclick="closeRunModal()">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1076,16 +1318,56 @@
   <div class="warmup-card">
     <div class="warmup-header" style="cursor:default">
       <div class="dot" style="background:var(--muted)"></div>
-      <h3>3 days: drop whichever day fits your schedule least</h3>
+      <h3>Mon: Legs · Tue: Push · Wed: Run · Thu: Pull · Fri: Core · Sat: Run · Sun: Rest</h3>
     </div>
   </div>
   <div style="height:10px"></div>
   <div class="warmup-card">
     <div class="warmup-header" style="cursor:default">
       <div class="dot" style="background:var(--ink)"></div>
-      <h3>4 days: do all four with at least one rest day between legs days</h3>
+      <h3>Extend Saturday run gradually to build toward 10km — keep Wednesday short</h3>
     </div>
   </div>
+</div>
+
+<!-- CORE GYM -->
+<div class="page" id="page-core">
+  <div class="day-title">
+    <div class="day-dot" style="background:var(--core)"></div>
+    <div>
+      <h2>Core Day</h2>
+      <p>Stability, Rotation & Strength</p>
+    </div>
+  </div>
+
+  <div id="progress-core"></div>
+
+  <div class="section-label">Warm-Up (~5 min)</div>
+  <div class="warmup-card">
+    <div class="warmup-header" onclick="toggleWarmup(this)">
+      <div class="dot" style="background:var(--core)"></div>
+      <h3>5 min rower or ski erg, then movement prep</h3>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="warmup-body">
+      <div class="warmup-step"><strong>Cat-Cow</strong><span>10 reps — loosen up the spine before loaded core work</span></div>
+      <div class="warmup-step"><strong>Dead Bug</strong><span>5 each side, slow — treat as activation, not exercise</span></div>
+      <div class="warmup-step"><strong>Glute Bridges</strong><span>15 reps — prime the glutes before hip thrusts</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Exercises</div>
+  <div id="core-exercises"></div>
+
+  <div class="section-label">Notes</div>
+  <div class="key-principles">
+    <h3>Today's focus</h3>
+    <div class="principle"><strong>Hip Thrust</strong>This is new — start light and focus on the movement pattern before adding load. Drive through heels, squeeze glutes hard at the top.</div>
+    <div class="principle"><strong>Pallof Press</strong>Resist the rotation — the tension is the exercise. Don't rush.</div>
+    <div class="principle"><strong>Hanging Knee Raises</strong>Control the swing. Lower slowly — the eccentric matters.</div>
+  </div>
+
+  <button class="summary-btn" onclick="openSummary('core')">📋 End Session & Get Summary</button>
 </div>
 
 <!-- SUMMARY MODAL -->
@@ -1122,7 +1404,7 @@
 const data = {
   legs: [
     { name: "MultiPower Squat", sets: "3 × 10", weight: "35 kg", note: "Treat the bar as a guide, not a crutch — squat as if it were a free barbell. Feet should be directly under or just slightly forward of the bar; if you're leaning back into the bar, your feet are too far forward. Lower to parallel, drive through heels, chest up, core braced throughout." },
-    { name: "Leg Press", sets: "3 × 12", weight: "90 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest — thighs roughly parallel to the platform, shins roughly perpendicular. If the machine at its closest doesn't get you to 90°, flag to your PT." },
+    { name: "Leg Press", sets: "3 × 12", weight: "80 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest. Dropped from 90 kg as a precaution after a left knee niggle (inside front, beside kneecap) — monitor carefully and back off immediately if it returns." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "5 kg DB each hand", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Watch left knee tracking — make sure it doesn't drift inward on the lowering phase. Monitor for lateral knee click and flag if it returns. Physio recommendation." },
     { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "6 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Balance consistently good — moved up to 6 kg. Physio recommendation." },
     { name: "Nordic Curl", sets: "3 × 5", weight: "Bodyweight", note: "Kneel on the lat pulldown seat facing away, hook feet under the knee pad. Slowly lower your body toward the floor by letting your knees extend — don't hinge at the hip. Catch with hands when you can no longer hold yourself, push back to start. Hamstring cramping sensation after sets is normal — light stretching between sets is fine. Stay at 3 × 5 until descent feels more controlled." },
@@ -1142,6 +1424,15 @@ const data = {
     { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "30 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 25 kg assistance." },
     { name: "Dumbbell Bicep Curl", sets: "3 × 12", weight: "3 kg each", note: "Elbows pinned at your sides, no body swing. Keep wrist completely neutral throughout. Stop 10–15° short of full extension. Use a loose grip to reduce tension on the forearm tendons — this has been helping. Pain is still present; if it increases at any point stop and seek a GP referral to a physio." },
   ],
+  core: [
+    { name: "Hip Thrust Machine", sets: "3 × 12", weight: "20 kg", note: "Sit in the hip thrust machine (glute drive), feet flat and shoulder-width apart. Drive hips up by squeezing your glutes, hold briefly at the top, lower with control. Don't hyperextend at the top — full extension is enough. Start light to learn the movement pattern before adding load." },
+    { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "10 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Don't let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability." },
+    { name: "Cable Woodchop", sets: "3 × 12 each side", weight: "10 kg", note: "Set cable high. Stand side-on, pull the cable diagonally down across your body from high to low, rotating through your torso. Control both directions — don't let the cable yank you back. Great rotational power for running." },
+    { name: "Dead Bug", sets: "3 × 10 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. This is a control exercise — slow is everything. If your lower back lifts, you've gone too far." },
+    { name: "Plank with Shoulder Taps", sets: "3 × 20 taps (10 each side)", weight: "Bodyweight", note: "Plank on hands. Lift one hand to tap the opposite shoulder, keeping hips as still as possible. Slow and controlled — widen feet slightly if hips are rocking. Anti-rotation demand is high." },
+    { name: "Bicycle Crunches", sets: "3 × 15 each side", weight: "Bodyweight", note: "Hands lightly behind your head, rotation comes from the core not the neck. 2 second pause at full rotation. Don't rush." },
+    { name: "Hanging Knee Raises", sets: "3 × 10", weight: "Bodyweight", note: "Hang from the pull-up bar, controlled grip. Bring both knees up toward your chest, pause at the top, lower slowly — don't let them drop. Avoid swinging; if you swing, pause and reset. Progress to straight leg raises over time." },
+  ],
 };
 
 // Home core routine — simple checklist, no weights
@@ -1157,16 +1448,17 @@ const dayMeta = {
   legs: { label: 'Legs Day', sub: 'Glutes & Knees', emoji: '🦵' },
   push: { label: 'Push Day', sub: 'Chest, Shoulders & Triceps', emoji: '🏋️' },
   pull: { label: 'Pull Day', sub: 'Back, Biceps & Rear Delts', emoji: '💪' },
+  core: { label: 'Core Day', sub: 'Stability, Rotation & Strength', emoji: '🧘' },
 };
 
-const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day' };
+const dayLabels = { legs: 'Legs Day', push: 'Push Day', pull: 'Pull Day', core: 'Core Day' };
 
 // ── localStorage ──
 const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '3.3'; // bump this when exercise defaults change
+const APP_VERSION = '3.5'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1186,7 +1478,7 @@ function loadFromStorage() {
     const versionMatch = savedVersion === APP_VERSION;
 
     if (savedState) {
-      ['legs','push','pull'].forEach(day => {
+      ['legs','push','pull','core'].forEach(day => {
         const savedByName = {};
         if (savedState[day]) {
           Object.values(savedState[day]).forEach(s => { if (s.name) savedByName[s.name] = s; });
@@ -1222,14 +1514,14 @@ function loadFromStorage() {
 
 // ── State ──
 const state = {};
-const weekCompleted = { legs: false, push: false, pull: false };
+const weekCompleted = { legs: false, push: false, pull: false, core: false };
 // calendarLog: { 'YYYY-MM-DD': { legs, push, pull, core } }
 const calendarLog = {};
 
 const homeState = {};
 homeData.forEach((ex, i) => { homeState[i] = { name: ex.name, done: false }; });
 
-['legs','push','pull'].forEach(day => {
+['legs','push','pull','core'].forEach(day => {
   state[day] = {};
   data[day].forEach((ex, i) => {
     state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
@@ -1273,69 +1565,169 @@ function dateKey(d) {
 }
 
 // ── Dashboard ──
+const weekPlan = [
+  { day: 'Mon', type: 'gym', key: 'legs',  label: 'Legs Day',  sub: 'Glutes & Knees',               emoji: '🦵', color: 'var(--legs)' },
+  { day: 'Tue', type: 'gym', key: 'push',  label: 'Push Day',  sub: 'Chest, Shoulders & Triceps',   emoji: '🏋️', color: 'var(--push)' },
+  { day: 'Wed', type: 'run', key: 'run1',  label: 'Run',       sub: 'Easy 5km',                     emoji: '🏃', color: 'var(--run)'  },
+  { day: 'Thu', type: 'gym', key: 'pull',  label: 'Pull Day',  sub: 'Back, Biceps & Rear Delts',    emoji: '💪', color: 'var(--pull)' },
+  { day: 'Fri', type: 'gym', key: 'core',  label: 'Core Day',  sub: 'Stability, Rotation & Strength', emoji: '🧘', color: 'var(--core)' },
+  { day: 'Sat', type: 'run', key: 'run2',  label: 'Run',       sub: 'Longer run',                   emoji: '🏃', color: 'var(--run)'  },
+  { day: 'Sun', type: 'rest', key: 'rest', label: 'Rest',      sub: 'Recovery day',                  emoji: '😴', color: 'var(--border)' },
+];
+
 function renderDashboard() {
   document.getElementById('dashboard-week-label').textContent = getWeekLabel();
-  const gymDays = ['legs','push','pull'];
   const container = document.getElementById('dashboard-cards');
   const today = todayKey();
-  const weekDays = getWeekDays();
-  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-  container.innerHTML = `
-    <div class="dash-calendar">
-      <div class="dash-calendar-label">This week</div>
-      <div class="dash-cal-row">
-        ${weekDays.map((d, i) => {
-          const key = dateKey(d);
-          const log = calendarLog[key] || {};
-          const isToday = key === today;
-          const icons = [
-            log.legs ? '🦵' : null,
-            log.push ? '🏋️' : null,
-            log.pull ? '💪' : null,
-          ].filter(Boolean);
-          const hasCore = log.core;
-          const hasActivity = icons.length > 0 || hasCore;
-          return `
-            <div class="dash-cal-day${isToday ? ' today' : ''}${hasActivity ? ' has-activity' : ''}">
-              <div class="dash-cal-day-label">${dayNames[i]}</div>
-              <div class="dash-cal-icons">
-                ${icons.map(e => `<span class="dash-cal-icon">${e}</span>`).join('')}
-                ${hasCore ? '<div class="dash-cal-core-dot"></div>' : ''}
-                ${isToday && icons.length === 0 && !hasCore ? '<div class="dash-cal-today-line"></div>' : ''}
-              </div>
-            </div>`;
-        }).join('')}
-      </div>
-    </div>
-  ` + gymDays.map(day => {
-    const total = data[day].length;
-    const doneExs = Object.values(state[day]).filter(s => s.done).length;
-    const pct = Math.round((doneExs / total) * 100);
-    const isDone = weekCompleted[day];
-    const color = `var(--${day})`;
-    let progressLine = '';
-    if (!isDone && doneExs > 0) {
-      progressLine = `<div class="dash-mini-bar-wrap"><div class="dash-mini-bar-fill" style="width:${pct}%; background:${color}"></div></div>`;
-    }
-    const statusContent = isDone ? '✓' : (doneExs > 0 ? `${doneExs}/${total}` : '');
-    const statusStyle = isDone ? '' : 'font-size:0.55rem; color:var(--muted);';
-    return `
-      <div class="dash-workout-card${isDone ? ' dash-done' : ''}" onclick="goToWorkout('${day}')">
-        <div class="dash-color-bar" style="background:${color}"></div>
-        <div class="dash-workout-info">
-          <div class="dash-workout-name">${dayMeta[day].label}</div>
-          <div class="dash-workout-sub">${dayMeta[day].sub}</div>
-          ${progressLine}
-        </div>
-        <div class="dash-status" style="${statusStyle}">${statusContent}</div>
-      </div>`;
-  }).join('');
+  container.innerHTML = `<div class="dash-week-grid">` +
+    weekPlan.map(plan => {
+      const isToday = (() => {
+        const weekDays = getWeekDays();
+        const planIdx = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(plan.day);
+        return dateKey(weekDays[planIdx]) === today;
+      })();
+
+      if (plan.type === 'rest') {
+        return `
+          <div class="dash-day-card is-rest${isToday ? ' is-today' : ''}">
+            <div class="dash-day-label">${plan.day}</div>
+            <div class="dash-day-color" style="background:${plan.color}"></div>
+            <div class="dash-day-info">
+              <div class="dash-day-name">${plan.emoji} ${plan.label}</div>
+              <div class="dash-day-sub">${plan.sub}</div>
+            </div>
+          </div>`;
+      }
+
+      if (plan.type === 'run') {
+        // Find if any run logged this week for this slot
+        const weekDays = getWeekDays();
+        const runLogs = weekDays.map(d => calendarLog[dateKey(d)]?.[plan.key]).filter(Boolean);
+        const isDone = runLogs.length > 0;
+        const runData = runLogs[0]; // most recent
+        let runSub = plan.sub;
+        if (isDone && runData) {
+          const parts = [];
+          if (runData.distance) parts.push(`${runData.distance} km`);
+          if (runData.time) parts.push(`${runData.time} min`);
+          if (runData.pace) parts.push(`${runData.pace} /km`);
+          if (parts.length) runSub = parts.join(' · ');
+        }
+        return `
+          <div class="dash-day-card is-clickable${isDone ? ' is-done' : ''}${isToday ? ' is-today' : ''}" onclick="openRunModal('${plan.key}')">
+            <div class="dash-day-label">${plan.day}</div>
+            <div class="dash-day-color" style="background:${plan.color}"></div>
+            <div class="dash-day-info">
+              <div class="dash-day-name">${plan.emoji} ${plan.label}</div>
+              <div class="dash-day-sub">${runSub}</div>
+            </div>
+            <div class="dash-day-status">${isDone ? '✓' : ''}</div>
+          </div>`;
+      }
+
+      // Gym day
+      const total = data[plan.key].length;
+      const doneExs = Object.values(state[plan.key]).filter(s => s.done).length;
+      const pct = Math.round((doneExs / total) * 100);
+      const isDone = weekCompleted[plan.key];
+      let progressLine = '';
+      if (!isDone && doneExs > 0) {
+        progressLine = `<div class="dash-day-mini-bar-wrap"><div class="dash-day-mini-bar-fill" style="width:${pct}%; background:${plan.color}"></div></div>`;
+      }
+      const statusContent = isDone ? '✓' : (doneExs > 0 ? `${doneExs}/${total}` : '');
+      const statusStyle = isDone ? '' : 'font-size:0.55rem; color:var(--muted);';
+      return `
+        <div class="dash-day-card is-clickable${isDone ? ' is-done' : ''}${isToday ? ' is-today' : ''}" onclick="goToWorkout('${plan.key}')">
+          <div class="dash-day-label">${plan.day}</div>
+          <div class="dash-day-color" style="background:${plan.color}"></div>
+          <div class="dash-day-info">
+            <div class="dash-day-name">${plan.emoji} ${plan.label}</div>
+            <div class="dash-day-sub">${plan.sub}</div>
+            ${progressLine}
+          </div>
+          <div class="dash-day-status" style="${statusStyle}">${statusContent}</div>
+        </div>`;
+    }).join('') + `</div>`;
 }
 
 function goToWorkout(day) {
   const tab = document.querySelector(`.tab[data-day="${day}"]`);
   showPage(day, tab);
+}
+
+// ── Run logging ──
+let currentRunKey = null;
+let selectedEffort = null;
+
+function openRunModal(runKey) {
+  currentRunKey = runKey;
+  selectedEffort = null;
+  document.getElementById('run-distance').value = '';
+  document.getElementById('run-time').value = '';
+  document.getElementById('run-pace').value = '';
+  document.getElementById('run-hr').value = '';
+  document.getElementById('run-note').value = '';
+  document.querySelectorAll('.run-effort-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('run-modal-overlay').classList.add('open');
+}
+
+function closeRunModal() {
+  document.getElementById('run-modal-overlay').classList.remove('open');
+}
+
+function handleRunOverlayClick(e) {
+  if (e.target === document.getElementById('run-modal-overlay')) closeRunModal();
+}
+
+function selectEffort(btn, effort) {
+  document.querySelectorAll('.run-effort-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedEffort = effort;
+}
+
+function saveRun() {
+  const key = todayKey();
+  if (!calendarLog[key]) calendarLog[key] = {};
+  const runData = {
+    distance: document.getElementById('run-distance').value,
+    time: document.getElementById('run-time').value,
+    pace: document.getElementById('run-pace').value,
+    hr: document.getElementById('run-hr').value,
+    effort: selectedEffort || '',
+    note: document.getElementById('run-note').value,
+    date: new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+  };
+  calendarLog[key][currentRunKey] = runData;
+  saveToStorage();
+
+  // Post to Sheets if toggled
+  if (document.getElementById('run-send-to-sheets').checked) {
+    postRunToSheets(runData);
+  }
+
+  closeRunModal();
+  renderDashboard();
+}
+
+function postRunToSheets(runData) {
+  const payload = {
+    date: runData.date,
+    day: currentRunKey === 'run1' ? 'Run (Wed)' : 'Run (Sat)',
+    type: 'run',
+    distance: runData.distance,
+    time: runData.time,
+    pace: runData.pace,
+    hr: runData.hr,
+    effort: runData.effort,
+    note: runData.note,
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Sheets sync failed:', err));
 }
 
 // ── Reset ──
@@ -1352,13 +1744,12 @@ function handleResetOverlayClick(e) {
 }
 
 function executeReset() {
-  ['legs','push','pull'].forEach(day => {
+  ['legs','push','pull','core'].forEach(day => {
     weekCompleted[day] = false;
     data[day].forEach((ex, i) => {
       state[day][i] = { name: ex.name, done: false, sets: ex.sets, weight: ex.weight, sessionNote: '' };
     });
     renderExercises(day);
-    // Clear any session note textareas still in the DOM
     data[day].forEach((_, i) => {
       const ta = document.getElementById(`exnote-${day}-${i}`);
       if (ta) ta.value = '';
@@ -1557,7 +1948,7 @@ function toggleExById(bodyId, chevron) {
   if (chevron) chevron.classList.toggle('chevron-open');
 }
 
-['legs','push','pull'].forEach(renderExercises);
+['legs','push','pull','core'].forEach(renderExercises);
 renderHomeExercises();
 
 function showPage(day, btn) {
