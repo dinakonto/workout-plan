@@ -1403,8 +1403,7 @@
 <script>
 const data = {
   legs: [
-    { name: "MultiPower Squat", sets: "3 × 10", weight: "35 kg", note: "Treat the bar as a guide, not a crutch — squat as if it were a free barbell. Feet should be directly under or just slightly forward of the bar; if you're leaning back into the bar, your feet are too far forward. Lower to parallel, drive through heels, chest up, core braced throughout." },
-    { name: "Leg Press", sets: "3 × 12", weight: "80 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest. Dropped from 90 kg as a precaution after a left knee niggle (inside front, beside kneecap) — monitor carefully and back off immediately if it returns." },
+    { name: "Leg Press", sets: "3 × 12", weight: "90 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest. MultiPower Squat temporarily removed due to recurring left knee pain during squat pattern — get knee assessed before reintroducing." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "5 kg DB each hand", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Watch left knee tracking — make sure it doesn't drift inward on the lowering phase. Monitor for lateral knee click and flag if it returns. Physio recommendation." },
     { name: "Single-Leg RDL", sets: "3 × 10 each leg", weight: "6 kg DB", note: "Hinge at the hip, keep back flat, slight bend in standing knee. Balance consistently good — moved up to 6 kg. Physio recommendation." },
     { name: "Nordic Curl", sets: "3 × 5", weight: "Bodyweight", note: "Kneel on the lat pulldown seat facing away, hook feet under the knee pad. Slowly lower your body toward the floor by letting your knees extend — don't hinge at the hip. Catch with hands when you can no longer hold yourself, push back to start. Hamstring cramping sensation after sets is normal — light stretching between sets is fine. Stay at 3 × 5 until descent feels more controlled." },
@@ -1458,7 +1457,7 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '3.9'; // bump this when exercise defaults change
+const APP_VERSION = '4.0'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
