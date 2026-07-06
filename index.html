@@ -1318,14 +1318,14 @@
   <div class="warmup-card">
     <div class="warmup-header" style="cursor:default">
       <div class="dot" style="background:var(--muted)"></div>
-      <h3>Mon: Legs · Tue: Push · Wed: Run · Thu: Pull · Fri: Core · Sat: Run · Sun: Rest</h3>
+      <h3>Mon/Tue/Thu: AM run + PM gym · Wed: run only · Fri: gym only · Sat: long run · Sun: rest</h3>
     </div>
   </div>
   <div style="height:10px"></div>
   <div class="warmup-card">
     <div class="warmup-header" style="cursor:default">
       <div class="dot" style="background:var(--ink)"></div>
-      <h3>Extend Saturday run gradually to build toward 10km — keep Wednesday short</h3>
+      <h3>Run in the morning when it's cool — gym in the afternoon/evening after work</h3>
     </div>
   </div>
 </div>
@@ -1459,7 +1459,7 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '4.2'; // bump this when exercise defaults change
+const APP_VERSION = '4.3'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1567,13 +1567,13 @@ function dateKey(d) {
 
 // ── Dashboard ──
 const weekPlan = [
-  { day: 'Mon', type: 'gym', key: 'legs',  label: 'Legs Day',  sub: 'Glutes & Knees',               emoji: '🦵', color: 'var(--legs)' },
-  { day: 'Tue', type: 'gym', key: 'push',  label: 'Push Day',  sub: 'Chest, Shoulders & Triceps',   emoji: '🏋️', color: 'var(--push)' },
-  { day: 'Wed', type: 'run', key: 'run1',  label: 'Run',       sub: 'Easy 5km',                     emoji: '🏃', color: 'var(--run)'  },
-  { day: 'Thu', type: 'gym', key: 'pull',  label: 'Pull Day',  sub: 'Back, Biceps & Rear Delts',    emoji: '💪', color: 'var(--pull)' },
-  { day: 'Fri', type: 'gym', key: 'core',  label: 'Core Day',  sub: 'Stability, Rotation & Strength', emoji: '🧘', color: 'var(--core)' },
-  { day: 'Sat', type: 'run', key: 'run2',  label: 'Run',       sub: 'Longer run',                   emoji: '🏃', color: 'var(--run)'  },
-  { day: 'Sun', type: 'rest', key: 'rest', label: 'Rest',      sub: 'Recovery day',                  emoji: '😴', color: 'var(--border)' },
+  { day: 'Mon', type: 'gym',  key: 'legs',  label: 'Legs Day',  sub: 'Glutes & Knees',                 emoji: '🦵', color: 'var(--legs)' },
+  { day: 'Tue', type: 'gym',  key: 'push',  label: 'Push Day',  sub: 'Chest, Shoulders & Triceps',     emoji: '🏋️', color: 'var(--push)' },
+  { day: 'Wed', type: 'rest', key: 'rest',  label: 'Rest / Run', sub: 'Managed in Garmin',             emoji: '🏃', color: 'var(--border)' },
+  { day: 'Thu', type: 'gym',  key: 'pull',  label: 'Pull Day',  sub: 'Back, Biceps & Rear Delts',      emoji: '💪', color: 'var(--pull)' },
+  { day: 'Fri', type: 'gym',  key: 'core',  label: 'Core Day',  sub: 'Stability, Rotation & Strength', emoji: '🧘', color: 'var(--core)' },
+  { day: 'Sat', type: 'rest', key: 'rest2', label: 'Rest / Run', sub: 'Managed in Garmin',             emoji: '🏃', color: 'var(--border)' },
+  { day: 'Sun', type: 'rest', key: 'rest3', label: 'Rest',       sub: 'Recovery day',                  emoji: '😴', color: 'var(--border)' },
 ];
 
 function renderDashboard() {
@@ -1601,33 +1601,45 @@ function renderDashboard() {
           </div>`;
       }
 
-      if (plan.type === 'run') {
-        // Find if any run logged this week for this slot
+      if (plan.type === 'run' || plan.type === 'both') {
+        const runKey = plan.type === 'both' ? `run_${plan.key}` : plan.key;
         const weekDays = getWeekDays();
-        const runLogs = weekDays.map(d => calendarLog[dateKey(d)]?.[plan.key]).filter(Boolean);
-        const isDone = runLogs.length > 0;
-        const runData = runLogs[0]; // most recent
-        let runSub = plan.sub;
-        if (isDone && runData) {
+        const runLogs = weekDays.map(d => calendarLog[dateKey(d)]?.[runKey]).filter(Boolean);
+        const isRunDone = runLogs.length > 0;
+        const runData = runLogs[0];
+        const isGymDone = plan.type === 'both' ? weekCompleted[plan.key] : false;
+        const isDone = plan.type === 'run' ? isRunDone : (isRunDone && isGymDone);
+
+        let subLine = plan.sub;
+        if (isRunDone && runData) {
           const parts = [];
           if (runData.distance) parts.push(`${runData.distance} km`);
           if (runData.time) parts.push(`${runData.time} min`);
           if (runData.pace) parts.push(`${runData.pace} /km`);
-          if (parts.length) runSub = parts.join(' · ');
+          if (parts.length) subLine = parts.join(' · ');
         }
+
+        let statusContent = '';
+        if (plan.type === 'both') {
+          statusContent = `<span style="font-size:0.55rem;color:var(--muted);line-height:1.4;text-align:center">${isGymDone ? '🏋️' : '○'}<br>${isRunDone ? '🏃' : '○'}</span>`;
+        } else {
+          statusContent = isRunDone ? '✓' : '';
+        }
+
         return `
-          <div class="dash-day-card is-clickable${isDone ? ' is-done' : ''}${isToday ? ' is-today' : ''}" onclick="openRunModal('${plan.key}')">
+          <div class="dash-day-card is-clickable${isDone ? ' is-done' : ''}${isToday ? ' is-today' : ''}" onclick="openRunModal('${runKey}')">
             <div class="dash-day-label">${plan.day}</div>
             <div class="dash-day-color" style="background:${plan.color}"></div>
             <div class="dash-day-info">
               <div class="dash-day-name">${plan.emoji} ${plan.label}</div>
-              <div class="dash-day-sub">${runSub}</div>
+              <div class="dash-day-sub">${subLine}</div>
             </div>
-            <div class="dash-day-status">${isDone ? '✓' : ''}</div>
+            <div class="dash-day-status">${statusContent}</div>
           </div>`;
       }
 
-      // Gym day
+      // Gym-only day
+      if (plan.type !== 'gym') return '';
       const total = data[plan.key].length;
       const doneExs = Object.values(state[plan.key]).filter(s => s.done).length;
       const pct = Math.round((doneExs / total) * 100);
