@@ -1098,63 +1098,6 @@
   </div>
 </div>
 
-<!-- RUN LOG MODAL -->
-<div class="modal-overlay" id="run-modal-overlay" onclick="handleRunOverlayClick(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Log Run</h2>
-      <button class="modal-close" onclick="closeRunModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="run-fields">
-        <div class="run-field-row">
-          <div class="run-field">
-            <div class="run-field-label">Distance (km)</div>
-            <input class="run-input" id="run-distance" type="number" step="0.1" placeholder="5.0" />
-          </div>
-          <div class="run-field">
-            <div class="run-field-label">Time (min)</div>
-            <input class="run-input" id="run-time" type="number" step="1" placeholder="30" />
-          </div>
-        </div>
-        <div class="run-field-row">
-          <div class="run-field">
-            <div class="run-field-label">Avg Pace (min/km)</div>
-            <input class="run-input" id="run-pace" type="text" placeholder="6:00" />
-          </div>
-          <div class="run-field">
-            <div class="run-field-label">Avg Heart Rate (bpm)</div>
-            <input class="run-input" id="run-hr" type="number" step="1" placeholder="145" />
-          </div>
-        </div>
-        <div class="run-field">
-          <div class="run-field-label">Perceived Effort</div>
-          <div class="run-effort-btns" id="run-effort-btns">
-            <button class="run-effort-btn" onclick="selectEffort(this, 'easy')">Easy</button>
-            <button class="run-effort-btn" onclick="selectEffort(this, 'moderate')">Moderate</button>
-            <button class="run-effort-btn" onclick="selectEffort(this, 'hard')">Hard</button>
-          </div>
-        </div>
-        <div class="run-field">
-          <div class="run-field-label">Notes (optional)</div>
-          <textarea class="session-note-input" id="run-note" placeholder="How did it feel? Anything to flag..."></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="modal-footer-top">
-        <label class="sheets-toggle">
-          <input type="checkbox" id="run-send-to-sheets" checked>
-          <span>Save to Google Sheets</span>
-        </label>
-      </div>
-      <div class="modal-footer-btns">
-        <button class="btn-copy" style="background:var(--run)" id="run-save-btn" onclick="saveRun()">Save Run</button>
-        <button class="btn-dismiss" onclick="closeRunModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="page" id="page-legs">
   <div class="day-title">
@@ -1405,14 +1348,14 @@ const data = {
   legs: [
     { name: "MultiPower Squat", sets: "3 × 10", weight: "25 kg", note: "Reintroduced on physio advice. Treat the bar as a guide, not a crutch. Feet directly under or just slightly forward of the bar. Lower to parallel, drive through heels, chest up, core braced. Monitor left knee carefully — stop immediately if any pain returns." },
     { name: "Heel-Elevated Squat", sets: "3 × 10", weight: "Bodyweight or light KB", note: "Place heels on a small weight plate or wedge. Feet shoulder-width apart. Descend all the way into a deep squat, keeping your back as vertical as possible. Drive back up through your whole foot. The heel elevation changes ankle angle and allows deeper knee flexion with upright torso — physio recommendation for knee rehab. Start bodyweight, add a light kettlebell held at chest (goblet position) when ready." },
-    { name: "Leg Press", sets: "3 × 12", weight: "90 kg", note: "Feet high on the platform = more glute, easier on knees. Aim for roughly 90° at the knee when the platform is at its lowest." },
+    { name: "Leg Press", sets: "3 × 12", weight: "70 kg", note: "Reduced to 70 kg while easing knee back in. Build back to 80 kg then 90 kg once knee feels confident through full sessions." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "5 kg DB each hand", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Watch left knee tracking — make sure it doesn't drift inward. Physio recommendation." },
-    { name: "Romanian Deadlift", sets: "3 × 10", weight: "20 kg", note: "Physio recommended switching from Single-Leg RDL to two-leg version. Feet hip-width apart, slight bend in knees. Hinge at the hip, keeping back flat and bar close to your legs. Lower until you feel a hamstring stretch, drive hips forward to return. Keep core braced throughout." },
+    { name: "Romanian Deadlift", sets: "3 × 10", weight: "2 × 10 kg DBs", note: "⚠️ Switch to two-leg version — physio recommendation. Feet hip-width apart, both feet on the floor, hinge at the hip with flat back, dumbbells in both hands. Currently still doing single-leg at 5 kg — transition to two-leg when ready. Lower until you feel a hamstring stretch, drive hips forward to return. Keep core braced throughout." },
     { name: "Nordic Curl", sets: "3 × 5", weight: "Bodyweight", note: "Kneel on the lat pulldown seat facing away, hook feet under the knee pad. Slowly lower your body toward the floor by letting your knees extend — don't hinge at the hip. Catch with hands when you can no longer hold yourself, push back to start. Hamstring cramping after sets is normal — light stretching between sets is fine." },
     { name: "Calf Raises", sets: "3 × 15", weight: "6 kg DB (one hand)", note: "Stand on a platform with heels off the edge for full range of motion. Hold a 6 kg dumbbell in one hand. Switch hands each set." },
   ],
   push: [
-    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "25 kg total", note: "Keep elbows at about 45° from your body. Back to 25 kg after reset session." },
+    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. Completed 25 kg cleanly — moving up to 30 kg." },
     { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down) — the lowering phase is where a lot of the stimulus happens, don't rush it. Keep head and upper back in contact with the pad throughout." },
     { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lateral raises are deceptively hard — light weight is correct and normal. Lead with your elbow rather than your wrist, and stop at shoulder height (going higher recruits the trap instead). Stay upright and close to the machine — leaning out slightly increases tension at the bottom but only if you're not compensating with momentum or body lean. Move to 5 kg once all reps are consistently clean." },
     { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides — if they flare out, the tricep loses leverage. Start from roughly 90° at the elbow and focus on fully extending the arm at the bottom of each rep. Full range of motion is the priority." },
@@ -1459,7 +1402,7 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '4.3'; // bump this when exercise defaults change
+const APP_VERSION = '4.5'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1601,43 +1544,6 @@ function renderDashboard() {
           </div>`;
       }
 
-      if (plan.type === 'run' || plan.type === 'both') {
-        const runKey = plan.type === 'both' ? `run_${plan.key}` : plan.key;
-        const weekDays = getWeekDays();
-        const runLogs = weekDays.map(d => calendarLog[dateKey(d)]?.[runKey]).filter(Boolean);
-        const isRunDone = runLogs.length > 0;
-        const runData = runLogs[0];
-        const isGymDone = plan.type === 'both' ? weekCompleted[plan.key] : false;
-        const isDone = plan.type === 'run' ? isRunDone : (isRunDone && isGymDone);
-
-        let subLine = plan.sub;
-        if (isRunDone && runData) {
-          const parts = [];
-          if (runData.distance) parts.push(`${runData.distance} km`);
-          if (runData.time) parts.push(`${runData.time} min`);
-          if (runData.pace) parts.push(`${runData.pace} /km`);
-          if (parts.length) subLine = parts.join(' · ');
-        }
-
-        let statusContent = '';
-        if (plan.type === 'both') {
-          statusContent = `<span style="font-size:0.55rem;color:var(--muted);line-height:1.4;text-align:center">${isGymDone ? '🏋️' : '○'}<br>${isRunDone ? '🏃' : '○'}</span>`;
-        } else {
-          statusContent = isRunDone ? '✓' : '';
-        }
-
-        return `
-          <div class="dash-day-card is-clickable${isDone ? ' is-done' : ''}${isToday ? ' is-today' : ''}" onclick="openRunModal('${runKey}')">
-            <div class="dash-day-label">${plan.day}</div>
-            <div class="dash-day-color" style="background:${plan.color}"></div>
-            <div class="dash-day-info">
-              <div class="dash-day-name">${plan.emoji} ${plan.label}</div>
-              <div class="dash-day-sub">${subLine}</div>
-            </div>
-            <div class="dash-day-status">${statusContent}</div>
-          </div>`;
-      }
-
       // Gym-only day
       if (plan.type !== 'gym') return '';
       const total = data[plan.key].length;
@@ -1667,80 +1573,6 @@ function renderDashboard() {
 function goToWorkout(day) {
   const tab = document.querySelector(`.tab[data-day="${day}"]`);
   showPage(day, tab);
-}
-
-// ── Run logging ──
-let currentRunKey = null;
-let selectedEffort = null;
-
-function openRunModal(runKey) {
-  currentRunKey = runKey;
-  selectedEffort = null;
-  document.getElementById('run-distance').value = '';
-  document.getElementById('run-time').value = '';
-  document.getElementById('run-pace').value = '';
-  document.getElementById('run-hr').value = '';
-  document.getElementById('run-note').value = '';
-  document.querySelectorAll('.run-effort-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('run-modal-overlay').classList.add('open');
-}
-
-function closeRunModal() {
-  document.getElementById('run-modal-overlay').classList.remove('open');
-}
-
-function handleRunOverlayClick(e) {
-  if (e.target === document.getElementById('run-modal-overlay')) closeRunModal();
-}
-
-function selectEffort(btn, effort) {
-  document.querySelectorAll('.run-effort-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedEffort = effort;
-}
-
-function saveRun() {
-  const key = todayKey();
-  if (!calendarLog[key]) calendarLog[key] = {};
-  const runData = {
-    distance: document.getElementById('run-distance').value,
-    time: document.getElementById('run-time').value,
-    pace: document.getElementById('run-pace').value,
-    hr: document.getElementById('run-hr').value,
-    effort: selectedEffort || '',
-    note: document.getElementById('run-note').value,
-    date: new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
-  };
-  calendarLog[key][currentRunKey] = runData;
-  saveToStorage();
-
-  // Post to Sheets if toggled
-  if (document.getElementById('run-send-to-sheets').checked) {
-    postRunToSheets(runData);
-  }
-
-  closeRunModal();
-  renderDashboard();
-}
-
-function postRunToSheets(runData) {
-  const payload = {
-    date: runData.date,
-    day: currentRunKey === 'run1' ? 'Run (Wed)' : 'Run (Sat)',
-    type: 'run',
-    distance: runData.distance,
-    time: runData.time,
-    pace: runData.pace,
-    hr: runData.hr,
-    effort: runData.effort,
-    note: runData.note,
-  };
-  fetch(SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).catch(err => console.warn('Sheets sync failed:', err));
 }
 
 // ── Reset ──
