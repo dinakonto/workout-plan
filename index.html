@@ -638,6 +638,30 @@
   .ex-session-note:focus { border-color: var(--ink); }
   .ex-session-note::placeholder { color: var(--muted); opacity: 0.7; }
 
+  /* ── Last session note ── */
+  .ex-last-note-wrap {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-left: 3px solid var(--border);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .ex-last-note-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .ex-last-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
   /* ── Dashboard ── */
   .dash-workout-card {
     background: var(--card);
@@ -1355,7 +1379,7 @@ const data = {
     { name: "Calf Raises", sets: "3 × 15", weight: "6 kg DB (one hand)", note: "Stand on a platform with heels off the edge for full range of motion. Hold a 6 kg dumbbell in one hand. Switch hands each set." },
   ],
   push: [
-    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. Completed 25 kg cleanly — moving up to 30 kg." },
+    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "25 kg total", note: "Keep elbows at about 45° from your body. Dropped back to 25 kg — complete cleanly before returning to 30 kg." },
     { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down) — the lowering phase is where a lot of the stimulus happens, don't rush it. Keep head and upper back in contact with the pad throughout." },
     { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lateral raises are deceptively hard — light weight is correct and normal. Lead with your elbow rather than your wrist, and stop at shoulder height (going higher recruits the trap instead). Stay upright and close to the machine — leaning out slightly increases tension at the bottom but only if you're not compensating with momentum or body lean. Move to 5 kg once all reps are consistently clean." },
     { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides — if they flare out, the tricep loses leverage. Start from roughly 90° at the elbow and focus on fully extending the arm at the bottom of each rep. Full range of motion is the priority." },
@@ -1366,11 +1390,10 @@ const data = {
     { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus, not up to your collarbone. Elbows travel close to your sides and finish pointing back behind you, not flared wide. Think elbows to back pockets. Controlled return without rounding forward. Rest at least 90 seconds between sets." },
     { name: "Rear Delt Fly (pec deck)", sets: "3 × 12", weight: "18 kg", note: "Sit facing the pec deck machine. Grab handles with palms facing each other or down, arms at shoulder height. Pull handles outward and back, squeezing rear delts and shoulder blades together at the end. Keep a slight bend in the elbows throughout — don't let arms drop below shoulder height. Machine weights: 9, 14, 18, 23, 27, 32 kg etc. with 2.5–7.5 lb add-ons. Next step: 23 kg. Alternative: Cable Face Pull with straight bar (not rope) at 12.5 kg." },
     { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "30 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. Stick to the same assistance weight across all 3 sets. When all three sets feel genuinely comfortable, drop to 25 kg assistance." },
-    { name: "Cable Bicep Curl (behind body)", sets: "3 × 12 each arm", weight: "5 kg", note: "Stand side-on to a low cable pulley, arm extended behind your body. Keeping your upper arm pinned back and behind your torso, curl your forearm forward toward your shoulder. The extended starting position keeps constant tension on the bicep throughout the range and avoids the forearm strain of dumbbell curls — physio recommendation. Hammer or neutral grip if more comfortable." },
   ],
   core: [
-    { name: "Hip Thrust Machine", sets: "3 × 10", weight: "10 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 10 kg total. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Build back to 3 × 12 before adding more weight." },
-    { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "10 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Dont let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability." },
+    { name: "Hip Thrust Machine", sets: "3 × 12", weight: "10 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 10 kg total. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Build to 3 × 12 consistently before adding more weight." },
+    { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "12.5 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Dont let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability." },
     { name: "Cable Woodchop", sets: "3 × 12 each side", weight: "12.5 kg", note: "Set cable high. Feet shoulder-width apart, stand side-on. The movement comes from your hips and torso rotating together — arms are levers, core is the engine. Keep arms relatively straight, pivot through your back foot as you rotate. Resist the return slowly — the deceleration is where much of the benefit is. Don't let the cable snap you back." },
     { name: "Dead Bug", sets: "3 × 12 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow is everything — if your lower back lifts, youve gone too far." },
     { name: "Plank with Shoulder Taps", sets: "3 × 25 taps (12-13 each side)", weight: "Bodyweight", note: "Plank on hands. Lift one hand to tap the opposite shoulder, keeping hips as still as possible. Slow and controlled — widen feet slightly if hips are rocking." },
@@ -1402,7 +1425,8 @@ const STORAGE_KEY = 'gymplan_state';
 const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
-const APP_VERSION = '4.5'; // bump this when exercise defaults change
+const LAST_NOTES_KEY = 'gymplan_last_notes';
+const APP_VERSION = '4.8'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1410,6 +1434,7 @@ function saveToStorage() {
     localStorage.setItem(WEEK_KEY, JSON.stringify(weekCompleted));
     localStorage.setItem(CALENDAR_KEY, JSON.stringify(calendarLog));
     localStorage.setItem(VERSION_KEY, APP_VERSION);
+    localStorage.setItem(LAST_NOTES_KEY, JSON.stringify(lastNotes));
   } catch(e) {}
 }
 
@@ -1419,6 +1444,7 @@ function loadFromStorage() {
     const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const savedWeek = JSON.parse(localStorage.getItem(WEEK_KEY));
     const savedCal = JSON.parse(localStorage.getItem(CALENDAR_KEY));
+    const savedLastNotes = JSON.parse(localStorage.getItem(LAST_NOTES_KEY));
     const versionMatch = savedVersion === APP_VERSION;
 
     if (savedState) {
@@ -1436,7 +1462,6 @@ function loadFromStorage() {
             state[day][i] = {
               name: ex.name,
               done: saved.done || false,
-              // Only preserve edited sets/weight if version matches — otherwise use code defaults
               sets: versionMatch ? (saved.sets || ex.sets) : ex.sets,
               weight: versionMatch ? (saved.weight || ex.weight) : ex.weight,
               sessionNote: saved.sessionNote || ''
@@ -1444,7 +1469,6 @@ function loadFromStorage() {
           }
         });
       });
-      // Home state
       if (savedState.home) {
         Object.entries(savedState.home).forEach(([i, s]) => {
           if (homeState[i] !== undefined) homeState[i] = { ...homeState[i], done: s.done || false };
@@ -1453,14 +1477,15 @@ function loadFromStorage() {
     }
     if (savedWeek) Object.assign(weekCompleted, savedWeek);
     if (savedCal) Object.assign(calendarLog, savedCal);
+    if (savedLastNotes) Object.assign(lastNotes, savedLastNotes);
   } catch(e) {}
 }
 
 // ── State ──
 const state = {};
 const weekCompleted = { legs: false, push: false, pull: false, core: false };
-// calendarLog: { 'YYYY-MM-DD': { legs, push, pull, core } }
 const calendarLog = {};
+const lastNotes = {}; // { day: { exerciseName: noteText } }
 
 const homeState = {};
 homeData.forEach((ex, i) => { homeState[i] = { name: ex.name, done: false }; });
@@ -1589,6 +1614,16 @@ function handleResetOverlayClick(e) {
 }
 
 function executeReset() {
+  // Archive current session notes as last session notes before clearing
+  ['legs','push','pull','core'].forEach(day => {
+    lastNotes[day] = {};
+    data[day].forEach((ex, i) => {
+      if (state[day][i].sessionNote && state[day][i].sessionNote.trim()) {
+        lastNotes[day][ex.name] = state[day][i].sessionNote.trim();
+      }
+    });
+  });
+
   ['legs','push','pull','core'].forEach(day => {
     weekCompleted[day] = false;
     data[day].forEach((ex, i) => {
@@ -1600,10 +1635,8 @@ function executeReset() {
       if (ta) ta.value = '';
     });
   });
-  // Clear home state
   homeData.forEach((_, i) => { homeState[i].done = false; });
   renderHomeExercises();
-  // Clear calendar
   Object.keys(calendarLog).forEach(k => delete calendarLog[k]);
   saveToStorage();
   closeResetModal();
@@ -1645,6 +1678,11 @@ function renderExercises(day) {
       <div class="ex-body" id="body-${day}-${i}">
         <div class="note-label">Notes</div>
         ${ex.note}
+        ${(lastNotes[day] && lastNotes[day][ex.name]) ? `
+        <div class="ex-last-note-wrap">
+          <div class="ex-last-note-label">Last session</div>
+          <div class="ex-last-note">${lastNotes[day][ex.name]}</div>
+        </div>` : ''}
         <div class="ex-session-note-wrap">
           <div class="ex-session-note-label">My session note</div>
           <textarea class="ex-session-note" id="exnote-${day}-${i}"
