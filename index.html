@@ -605,6 +605,60 @@
 
   .session-note-input:focus { border-color: var(--ink); }
 
+  /* ── Cycle tracking ── */
+  .cycle-details {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .cycle-summary-toggle {
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .cycle-summary-toggle::-webkit-details-marker { display: none; }
+
+  .cycle-fields {
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .cycle-field { display: flex; flex-direction: column; gap: 5px; }
+
+  .cycle-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .cycle-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink);
+    outline: none;
+    width: 80px;
+  }
+
+  .cycle-input:focus { border-color: var(--ink); }
+
   /* ── Per-exercise session note ── */
   .ex-session-note-wrap {
     margin-top: 12px;
@@ -1351,6 +1405,21 @@
         <div class="session-note-label">Add a note (optional)</div>
         <textarea class="session-note-input" id="session-note" placeholder="How did it feel? Any pain, skipped exercises, energy level..." oninput="regenerateSummary()"></textarea>
       </div>
+      <details class="cycle-details">
+        <summary class="cycle-summary-toggle">🌙 Cycle info (optional)</summary>
+        <div class="cycle-fields">
+          <div class="cycle-field">
+            <label class="cycle-label">Cycle day</label>
+            <input type="number" id="cycle-day" class="cycle-input" min="1" max="35" placeholder="e.g. 14" oninput="regenerateSummary()">
+          </div>
+          <div class="cycle-field">
+            <label class="cycle-label sheets-toggle" style="cursor:pointer">
+              <input type="checkbox" id="cycle-bleeding" oninput="regenerateSummary()">
+              <span>Currently bleeding</span>
+            </label>
+          </div>
+        </div>
+      </details>
     </div>
     <div class="modal-footer">
       <div class="modal-footer-top">
@@ -1379,9 +1448,9 @@ const data = {
     { name: "Calf Raises", sets: "3 × 15", weight: "6 kg DB (one hand)", note: "Stand on a platform with heels off the edge for full range of motion. Hold a 6 kg dumbbell in one hand. Switch hands each set." },
   ],
   push: [
-    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. Rebuilt to 25 kg cleanly — moving back to 30 kg." },
+    { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. First session at 30 kg — keep building." },
     { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout. When both arms complete set 3 comfortably, move to 7.5 kg." },
-    { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lateral raises are deceptively hard — light weight is correct and normal. Lead with your elbow rather than your wrist, stop at shoulder height. Stay upright and close to the machine. Move to 5 kg once all reps are consistently clean." },
+    { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lead with your elbow — imagine your hand is a hook and the weight doesn't exist. Soft bend in the elbow (10–15°) that doesn't change throughout. Pause briefly at shoulder height before lowering. Lower slowly (2–3 seconds). Worth trying dumbbell lateral raises as an alternative — same weight, both arms simultaneously. Move to 5 kg once all reps are consistently clean." },
     { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides. Start from roughly 90° at the elbow, focus on fully extending the arm at the bottom. When completing all sets cleanly, move to 12.5 kg." },
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso. Body in a straight line. Progress by lowering the incline height — hands on a lower surface brings you closer to horizontal and meaningfully increases difficulty." },
   ],
@@ -1390,16 +1459,18 @@ const data = {
     { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus. Elbows travel close to your sides and finish pointing back behind you. Controlled return without rounding forward. Rest at least 90 seconds between sets. When completing consistently, consider moving to 4 × 8 at higher weight." },
     { name: "Rear Delt Fly (pec deck)", sets: "3 × 12", weight: "18 kg", note: "Sit facing the pec deck machine. Grab handles with palms facing each other or down, arms at shoulder height. Pull handles outward and back, squeezing rear delts and shoulder blades together. Keep slight bend in elbows. Machine weights: 9, 14, 18, 23, 27, 32 kg etc. with 2.5–7.5 lb add-ons. Next step: 23 kg. Alternative: Cable Face Pull with straight bar (not rope) at 12.5 kg when forearm allows." },
     { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "30 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. When all 3 sets feel genuinely comfortable, drop to 25 kg assistance." },
-    { name: "Cable Bicep Curl (behind body)", sets: "3 × 12 each arm", weight: "2.5 kg", note: "Stand side-on to a low cable pulley, arm extended behind your body. Keeping your upper arm pinned back behind your torso, curl your forearm forward toward your shoulder — don't move the elbow. Physio recommendation following brachioradialis diagnosis and dry needling treatment. Keep wrist completely neutral throughout — actively resist any wrist flexion or rotation. Monitor forearm carefully and stop if pain returns." },
+    { name: "Cable Bicep Curl (behind body)", sets: "3 × 12 each arm", weight: "2.5 kg", note: "Stand side-on to a low cable pulley, arm extended behind your body. Keeping your upper arm pinned back behind your torso, curl your forearm forward toward your shoulder — don't move the elbow. Physio recommendation following brachioradialis diagnosis and dry needling. Keep wrist completely neutral throughout — actively resist any wrist flexion or rotation. Monitor forearm carefully." },
+    { name: "Wrist Curls & Reverse Wrist Curls", sets: "2–3 × 15 each direction", weight: "As heavy as possible with control", note: "Physio-prescribed for brachioradialis rehab and wrist stability. Forearm resting on knee, palm up: lift wrist up and down (wrist curl). Flip palm down: lift wrist up and down (reverse wrist curl — may need lighter weight). Slow and controlled both directions. Do these at the end of Pull Day." },
   ],
   core: [
-    { name: "Hip Thrust Machine", sets: "3 × 12", weight: "10 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 10 kg total. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Add another 5 kg when 3 × 12 feels consistently easy." },
-    { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "10 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Don't let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability. Dropped back to 10 kg after break — rebuild to 12.5 kg." },
+    { name: "Hip Thrust Machine", sets: "3 × 10", weight: "15 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 15 kg. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Build back to 3 × 12 before adding more weight." },
+    { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "12.5 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Don't let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability." },
     { name: "Cable Woodchop", sets: "3 × 12 each side", weight: "12.5 kg", note: "Set cable high. Feet shoulder-width apart, stand side-on. Movement comes from hips and torso rotating together — arms are levers, core is the engine. Keep arms relatively straight, pivot through your back foot. Resist the return slowly." },
-    { name: "Dead Bug", sets: "3 × 12 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow is everything." },
-    { name: "Plank with Shoulder Taps", sets: "3 × 25 taps (12-13 each side)", weight: "Bodyweight", note: "Plank on hands. Lift one hand to tap the opposite shoulder, keeping hips as still as possible. Slow and controlled — widen feet slightly if hips are rocking." },
+    { name: "Back Extension (45 bench)", sets: "3 × 12", weight: "Bodyweight to start", note: "Lie face down on the 45 degree back extension bench, hips at the pivot point, feet anchored. Hinge at the hip, lowering your upper body down, then extend back up to horizontal. Squeeze glutes at the top. Keep back neutral — don't hyperextend. Add a weight plate held to chest when bodyweight feels easy. Targets lower back, glutes and hamstrings." },
+    { name: "Dead Bug", sets: "3 × 15 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow is everything." },
+    { name: "Plank with Shoulder Taps", sets: "3 × 25 taps + hold to 90 sec", weight: "Bodyweight", note: "Plank on hands, feet hip-width apart. Complete 25 shoulder taps slow and controlled, then drop to elbow plank and hold until 90 seconds total has elapsed. This gives both anti-rotation and isometric endurance work in one set." },
     { name: "Bicycle Crunches", sets: "3 × 20 each side", weight: "Bodyweight", note: "Hands lightly behind your head, rotation comes from the core not the neck. 2 second pause at full rotation. Don't rush." },
-    { name: "Straight Leg Raises (hanging)", sets: "3 × 8", weight: "Bodyweight", note: "Progression from hanging knee raises. Hang from the pull-up bar, legs extended. Raise both legs to horizontal (or higher if able), pause briefly, lower slowly. Avoid swinging — pause and reset if needed. Use chalk or straps if grip is limiting. If this is too difficult, return to hanging knee raises with pause and build up." },
+    { name: "Straight Leg Raises (hanging)", sets: "3 × 8", weight: "Bodyweight", note: "Hang from the pull-up bar. Complete as many straight leg raises as possible with good form, then immediately switch to bent knee raises to finish the set of 8. Track how many straight you get each session. Avoid swinging. Use chalk or straps if grip is limiting." },
   ],
 };
 
@@ -1427,7 +1498,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.0'; // bump this when exercise defaults change
+const APP_VERSION = '5.1'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1858,12 +1929,15 @@ function postToSheets(day, sessionNote) {
   const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const exercises = data[day];
   const doneCount = exercises.filter((_, i) => state[day][i].done).length;
+  const cycle = getCycleInfo();
   const payload = {
     date: dateStr,
     day: dayLabels[day],
     completed: doneCount,
     total: exercises.length,
     sessionNote: sessionNote || '',
+    cycleDay: cycle.day || '',
+    cycleBleeding: cycle.bleeding ? 'yes' : '',
     exercises: exercises.map((ex, i) => ({
       name: ex.name,
       done: state[day][i].done,
@@ -1881,17 +1955,29 @@ function postToSheets(day, sessionNote) {
 }
 
 // ── Summary ──
+function getCycleInfo() {
+  const day = document.getElementById('cycle-day')?.value;
+  const bleeding = document.getElementById('cycle-bleeding')?.checked;
+  return { day: day || '', bleeding: bleeding || false };
+}
+
 function buildSummaryText(day, note) {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const exercises = data[day];
   const doneCount = exercises.filter((_, i) => state[day][i].done).length;
+  const cycle = getCycleInfo();
   let lines = [
     `SESSION LOG — ${dayLabels[day].toUpperCase()}`,
     `Date: ${dateStr}`,
     `Completed: ${doneCount}/${exercises.length} exercises`,
-    '', 'EXERCISES:'
   ];
+  if (cycle.day) {
+    let cycleStr = `Cycle day: ${cycle.day}`;
+    if (cycle.bleeding) cycleStr += ' (bleeding)';
+    lines.push(cycleStr);
+  }
+  lines.push('', 'EXERCISES:');
   exercises.forEach((ex, i) => {
     const s = state[day][i];
     lines.push(`${s.done ? '✓' : '○'} ${ex.name}`);
@@ -1917,6 +2003,8 @@ function openSummary(day) {
   currentSummaryDay = day;
   document.getElementById('session-note').value = '';
   document.getElementById('send-to-sheets').checked = true;
+  if (document.getElementById('cycle-day')) document.getElementById('cycle-day').value = '';
+  if (document.getElementById('cycle-bleeding')) document.getElementById('cycle-bleeding').checked = false;
   document.getElementById('summary-text').textContent = buildSummaryText(day, '');
   document.getElementById('modal-overlay').classList.add('open');
 }
