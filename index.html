@@ -1498,7 +1498,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.1'; // bump this when exercise defaults change
+const APP_VERSION = '5.2'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1921,7 +1921,7 @@ function toggleWarmup(header) {
 }
 
 // ── Google Sheets ──
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyN7Htap2Yo3OXdH2C6FCWsvyZcl8exx3QeytCyxwaY7kERXer8-AkdOeK9UYLBH9x0VA/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwMHVSORuXEB9sJcWB9L32WxeZ2PE3DLlj0s1x8FFKIjIaT9DbQ9_3JXr7jMBxGt4gDRQ/exec';
 
 function postToSheets(day, sessionNote) {
   if (!document.getElementById('send-to-sheets').checked) return;
