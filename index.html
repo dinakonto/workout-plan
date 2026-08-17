@@ -1443,14 +1443,14 @@ const data = {
     { name: "Heel-Elevated Squat", sets: "3 × 10", weight: "Bodyweight or light KB", note: "Place heels on a small weight plate or wedge. Feet shoulder-width apart. Descend all the way into a deep squat, keeping your back as vertical as possible. Drive back up through your whole foot. Physio recommendation for knee rehab. Add a light kettlebell held at chest (goblet position) when bodyweight feels easy." },
     { name: "Leg Press", sets: "3 × 12", weight: "70 kg", note: "Reduced to 70 kg while easing knee back in. Build back to 80 kg then 90 kg once knee feels confident through full sessions. Feet high on platform = more glute, easier on knees." },
     { name: "Bulgarian Split Squat", sets: "3 × 8 each leg", weight: "5 kg DB each hand", note: "Rear foot on bench, front foot far enough forward that knee doesn't pass your toes. Lower slowly (3 counts down), push through your front heel. Watch left knee tracking — make sure it doesn't drift inward. Skip if right groin is still sore. Physio recommendation." },
-    { name: "Romanian Deadlift", sets: "3 × 10", weight: "2 × 10 kg DBs", note: "⚠️ Switch to two-leg version — physio recommendation. Feet hip-width apart, both feet on the floor, hinge at the hip with flat back, dumbbells in both hands. Lower until you feel a hamstring stretch, drive hips forward to return. Keep core braced throughout." },
+    { name: "Romanian Deadlift", sets: "3 × 10", weight: "2 × 8 kg DBs", note: "Two-leg version — physio recommendation. Feet hip-width apart, hinge at the hip with flat back, dumbbells in both hands. Lower until you feel a hamstring stretch, drive hips forward to return. Core braced throughout. Starting at 2 × 8 kg to bed in the two-leg pattern before building to 2 × 10 kg." },
     { name: "Nordic Curl", sets: "3 × 5", weight: "Bodyweight", note: "Kneel on the lat pulldown seat facing away, hook feet under the knee pad. Slowly lower your body toward the floor by letting your knees extend — don't hinge at the hip. Catch with hands when you can no longer hold yourself, push back to start. Hamstring cramping after sets is normal. Add a rep or two when descent feels more controlled." },
     { name: "Calf Raises", sets: "3 × 15", weight: "6 kg DB (one hand)", note: "Stand on a platform with heels off the edge for full range of motion. Hold a 6 kg dumbbell in one hand. Switch hands each set." },
   ],
   push: [
     { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. First session at 30 kg — keep building." },
     { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout. When both arms complete set 3 comfortably, move to 7.5 kg." },
-    { name: "Cable Lateral Raise", sets: "3 × 10 each side", weight: "2.5 kg", note: "Lead with your elbow — imagine your hand is a hook and the weight doesn't exist. Soft bend in the elbow (10–15°) that doesn't change throughout. Pause briefly at shoulder height before lowering. Lower slowly (2–3 seconds). Worth trying dumbbell lateral raises as an alternative — same weight, both arms simultaneously. Move to 5 kg once all reps are consistently clean." },
+    { name: "Dumbbell Lateral Raise", sets: "3 × 10 each side", weight: "3 kg", note: "Switched from cable to dumbbell — better wrist feedback in mirror. Lead with your elbow, soft bend (10–15°) that doesnt change, stop at shoulder height and pause briefly, lower slowly (2–3 seconds). Available weights: 2.5, 3, 4, 5, 6, 7.5, 10 kg — progress gradually." },
     { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides. Start from roughly 90° at the elbow, focus on fully extending the arm at the bottom. When completing all sets cleanly, move to 12.5 kg." },
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso. Body in a straight line. Progress by lowering the incline height — hands on a lower surface brings you closer to horizontal and meaningfully increases difficulty." },
   ],
@@ -1498,7 +1498,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.2'; // bump this when exercise defaults change
+const APP_VERSION = '5.3'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
