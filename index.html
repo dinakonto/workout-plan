@@ -1449,18 +1449,18 @@ const data = {
   ],
   push: [
     { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. First session at 30 kg — keep building." },
-    { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout. When both arms complete set 3 comfortably, move to 7.5 kg." },
-    { name: "Dumbbell Lateral Raise", sets: "3 × 10 each side", weight: "3 kg", note: "Switched from cable to dumbbell — better wrist feedback in mirror. Lead with your elbow, soft bend (10–15°) that doesnt change, stop at shoulder height and pause briefly, lower slowly (2–3 seconds). Available weights: 2.5, 3, 4, 5, 6, 7.5, 10 kg — progress gradually." },
+    { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "7.5 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout." },
+    { name: "Dumbbell Lateral Raise", sets: "3 × 10 each side", weight: "4 kg", note: "Lead with your elbow, soft bend (10–15°) that doesnt change, stop at shoulder height and pause briefly, lower slowly (2–3 seconds). Available weights: 2.5, 3, 4, 5, 6, 7.5, 10 kg. Do this before wrist curl work — forearm fatigue from rehab exercises affects performance here." },
     { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides. Start from roughly 90° at the elbow, focus on fully extending the arm at the bottom. When completing all sets cleanly, move to 12.5 kg." },
     { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso. Body in a straight line. Progress by lowering the incline height — hands on a lower surface brings you closer to horizontal and meaningfully increases difficulty." },
   ],
   pull: [
     { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "30 kg", note: "Pull to upper chest, lean back slightly. Drive elbows down toward your back pockets. Start each rep from a full dead hang. Rest at least 90 seconds between sets. Full range of motion is more important than the weight." },
     { name: "Seated Cable Row", sets: "3 × 12", weight: "25 kg", note: "Pull to your lower chest/upper abdomen — roughly your solar plexus. Elbows travel close to your sides and finish pointing back behind you. Controlled return without rounding forward. Rest at least 90 seconds between sets. When completing consistently, consider moving to 4 × 8 at higher weight." },
-    { name: "Rear Delt Fly (pec deck)", sets: "3 × 12", weight: "18 kg", note: "Sit facing the pec deck machine. Grab handles with palms facing each other or down, arms at shoulder height. Pull handles outward and back, squeezing rear delts and shoulder blades together. Keep slight bend in elbows. Machine weights: 9, 14, 18, 23, 27, 32 kg etc. with 2.5–7.5 lb add-ons. Next step: 23 kg. Alternative: Cable Face Pull with straight bar (not rope) at 12.5 kg when forearm allows." },
+    { name: "Rear Delt Fly (pec deck)", sets: "3 × 12", weight: "20.5 kg", note: "Sit facing the pec deck machine. Grab handles with palms facing each other or down, arms at shoulder height. Pull handles outward and back, squeezing rear delts and shoulder blades together. Keep slight bend in elbows. Using 18 kg + 5 lb add-on plate = ~20.5 kg. Machine weights: 9, 14, 18, 23, 27, 32 kg. Next step: 23 kg." },
     { name: "Assisted Pull-Up Machine", sets: "3 × 8", weight: "30 kg assistance", note: "Overhand grip, shoulder-width apart. Full range of motion — start from a dead hang. When all 3 sets feel genuinely comfortable, drop to 25 kg assistance." },
     { name: "Cable Bicep Curl (behind body)", sets: "3 × 12 each arm", weight: "2.5 kg", note: "Stand side-on to a low cable pulley, arm extended behind your body. Keeping your upper arm pinned back behind your torso, curl your forearm forward toward your shoulder — don't move the elbow. Physio recommendation following brachioradialis diagnosis and dry needling. Keep wrist completely neutral throughout — actively resist any wrist flexion or rotation. Monitor forearm carefully." },
-    { name: "Wrist Curls & Reverse Wrist Curls", sets: "2–3 × 15 each direction", weight: "As heavy as possible with control", note: "Physio-prescribed for brachioradialis rehab and wrist stability. Forearm resting on knee, palm up: lift wrist up and down (wrist curl). Flip palm down: lift wrist up and down (reverse wrist curl — may need lighter weight). Slow and controlled both directions. Do these at the end of Pull Day." },
+    { name: "Wrist Curls &amp; Reverse Wrist Curls", sets: "3 × 10 each direction", weight: "6 kg / 2.5 kg", note: "Physio-prescribed for brachioradialis rehab and wrist stability. Forearm resting on knee, palm up: lift wrist up and down (wrist curl) at 6 kg. Flip palm down: reverse wrist curl at 2.5 kg — lighter is normal. Slow and controlled. Do at the end of the session — can superset with push-ups." },
   ],
   core: [
     { name: "Hip Thrust Machine", sets: "3 × 10", weight: "15 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 15 kg. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Build back to 3 × 12 before adding more weight." },
@@ -1498,7 +1498,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.3'; // bump this when exercise defaults change
+const APP_VERSION = '5.4'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
