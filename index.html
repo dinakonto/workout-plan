@@ -1463,12 +1463,12 @@ const data = {
     { name: "Wrist Curls &amp; Reverse Wrist Curls", sets: "3 × 10 each direction", weight: "6 kg / 2.5 kg", note: "Physio-prescribed for brachioradialis rehab and wrist stability. Forearm resting on knee, palm up: lift wrist up and down (wrist curl) at 6 kg. Flip palm down: reverse wrist curl at 2.5 kg — lighter is normal. Slow and controlled. Do at the end of the session — can superset with push-ups." },
   ],
   core: [
-    { name: "Hip Thrust Machine", sets: "3 × 10", weight: "15 kg added", note: "Machine starting resistance is ~22.7 kg, now adding 15 kg. Drive through heels, squeeze glutes hard at the top — body from knees to shoulders should be parallel to the floor, not hyperextended. Build back to 3 × 12 before adding more weight." },
+    { name: "Hip Thrust Machine", sets: "3 × 12", weight: "10 kg added", note: "Dropped from 15 kg after right hamstring twinge — monitor hamstring carefully. Machine starting resistance is ~22.7 kg. Drive through heels, squeeze glutes at the top — body parallel to floor, not hyperextended. Rebuild to 15 kg when hamstring has settled." },
     { name: "Cable Pallof Press", sets: "3 × 12 each side", weight: "12.5 kg", note: "Stand side-on to the cable, handle at chest height. Brace your core, press the handle straight out and hold for 2 seconds, return slowly. Don't let the cable rotate you — resisting that pull is the whole exercise. Split stance for stability." },
     { name: "Cable Woodchop", sets: "3 × 12 each side", weight: "12.5 kg", note: "Set cable high. Feet shoulder-width apart, stand side-on. Movement comes from hips and torso rotating together — arms are levers, core is the engine. Keep arms relatively straight, pivot through your back foot. Resist the return slowly." },
     { name: "Back Extension (45 bench)", sets: "3 × 12", weight: "Bodyweight to start", note: "Lie face down on the 45 degree back extension bench, hips at the pivot point, feet anchored. Hinge at the hip, lowering your upper body down, then extend back up to horizontal. Squeeze glutes at the top. Keep back neutral — don't hyperextend. Add a weight plate held to chest when bodyweight feels easy. Targets lower back, glutes and hamstrings." },
     { name: "Dead Bug", sets: "3 × 15 each side", weight: "Bodyweight", note: "Lie on your back, arms up, knees at 90°. Lower opposite arm and leg slowly without letting your lower back lift off the floor. Slow is everything." },
-    { name: "Plank with Shoulder Taps", sets: "3 × 25 taps + hold to 90 sec", weight: "Bodyweight", note: "Plank on hands, feet hip-width apart. Complete 25 shoulder taps slow and controlled, then drop to elbow plank and hold until 90 seconds total has elapsed. This gives both anti-rotation and isometric endurance work in one set." },
+    { name: "Plank", sets: "3 × 90 sec", weight: "Bodyweight", note: "⚠️ Left wrist pain when weight-bearing on hands — switch to elbow plank until wrist is assessed by physio. 3 × 90 seconds on elbows. Return to shoulder tap version once wrist is cleared." },
     { name: "Bicycle Crunches", sets: "3 × 20 each side", weight: "Bodyweight", note: "Hands lightly behind your head, rotation comes from the core not the neck. 2 second pause at full rotation. Don't rush." },
     { name: "Straight Leg Raises (hanging)", sets: "3 × 8", weight: "Bodyweight", note: "Hang from the pull-up bar. Complete as many straight leg raises as possible with good form, then immediately switch to bent knee raises to finish the set of 8. Track how many straight you get each session. Avoid swinging. Use chalk or straps if grip is limiting." },
   ],
@@ -1498,7 +1498,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.5'; // bump this when exercise defaults change
+const APP_VERSION = '5.6'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
