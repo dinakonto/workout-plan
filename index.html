@@ -716,6 +716,13 @@
     font-style: italic;
   }
 
+  .ex-last-note-meta {
+    font-size: 0.72rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+
   /* ── Dashboard ── */
   .dash-workout-card {
     background: var(--card);
@@ -1449,10 +1456,10 @@ const data = {
   ],
   push: [
     { name: "Cable or Machine Chest Press", sets: "3 × 12", weight: "30 kg total", note: "Keep elbows at about 45° from your body. First session at 30 kg — keep building." },
-    { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "6 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout. Dropped back to 6 kg to recover after illness — return to 7.5 kg once completing all sets cleanly." },
+    { name: "Seated Dumbbell Shoulder Press", sets: "3 × 10", weight: "7 kg each", note: "Press with intent (1–2 seconds up), lower slowly (2–3 seconds down). Keep head and upper back in contact with the pad throughout. Consolidate at 7 kg before moving to 7.5 kg." },
     { name: "Dumbbell Lateral Raise", sets: "3 × 10 each side", weight: "4 kg", note: "Lead with your elbow, soft bend (10–15°) that doesnt change, stop at shoulder height and pause briefly, lower slowly (2–3 seconds). Available weights: 2.5, 3, 4, 5, 6, 7.5, 10 kg. Do this before wrist curl work — forearm fatigue from rehab exercises affects performance here." },
-    { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "7.5 kg", note: "Keep elbows pinned tight to your sides. Start from roughly 90° at the elbow, focus on fully extending the arm at the bottom. Dropped to 7.5 kg to recover after illness — rebuild to 10 kg before progressing to 12.5 kg." },
-    { name: "Incline Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Hands shoulder-width apart, elbows at about 45° from your torso. Body in a straight line. Progress by lowering the incline height — hands on a lower surface brings you closer to horizontal and meaningfully increases difficulty." },
+    { name: "Tricep Pushdown (cable)", sets: "3 × 12", weight: "10 kg", note: "Keep elbows pinned tight to your sides. Start from roughly 90° at the elbow, focus on fully extending the arm at the bottom. When completing all sets cleanly, move to 12.5 kg." },
+    { name: "Floor Push-Ups", sets: "3 × 10", weight: "Bodyweight", note: "Progressed from incline to floor level — great milestone. Hands shoulder-width apart, elbows at about 45° from your torso. Body in a straight line from head to heels. Build to completing all 3 × 10 before adding reps or load." },
   ],
   pull: [
     { name: "Lat Pulldown (cable)", sets: "3 × 12", weight: "30 kg", note: "Pull to upper chest, lean back slightly. Drive elbows down toward your back pockets. Start each rep from a full dead hang. Rest at least 90 seconds between sets. Full range of motion is more important than the weight." },
@@ -1498,7 +1505,7 @@ const WEEK_KEY = 'gymplan_week';
 const CALENDAR_KEY = 'gymplan_calendar';
 const VERSION_KEY = 'gymplan_version';
 const LAST_NOTES_KEY = 'gymplan_last_notes';
-const APP_VERSION = '5.6'; // bump this when exercise defaults change
+const APP_VERSION = '5.7'; // bump this when exercise defaults change
 
 function saveToStorage() {
   try {
@@ -1686,13 +1693,17 @@ function handleResetOverlayClick(e) {
 }
 
 function executeReset() {
-  // Archive current session notes as last session notes before clearing
+  // Archive current session state as last session data before clearing
   ['legs','push','pull','core'].forEach(day => {
     lastNotes[day] = {};
     data[day].forEach((ex, i) => {
-      if (state[day][i].sessionNote && state[day][i].sessionNote.trim()) {
-        lastNotes[day][ex.name] = state[day][i].sessionNote.trim();
-      }
+      const s = state[day][i];
+      // Always save sets and weight; only save note if present
+      lastNotes[day][ex.name] = {
+        sets: s.sets,
+        weight: s.weight,
+        note: s.sessionNote ? s.sessionNote.trim() : ''
+      };
     });
   });
 
@@ -1750,11 +1761,21 @@ function renderExercises(day) {
       <div class="ex-body" id="body-${day}-${i}">
         <div class="note-label">Notes</div>
         ${ex.note}
-        ${(lastNotes[day] && lastNotes[day][ex.name]) ? `
+        ${(lastNotes[day] && lastNotes[day][ex.name]) ? (() => {
+          const last = lastNotes[day][ex.name];
+          // Handle both old format (string) and new format (object)
+          const isObj = typeof last === 'object';
+          const sets = isObj ? last.sets : '';
+          const weight = isObj ? last.weight : '';
+          const note = isObj ? last.note : last;
+          const metaLine = (sets || weight) ? `<div class="ex-last-note-meta">${[sets, weight].filter(Boolean).join(' · ')}</div>` : '';
+          const noteLine = note ? `<div class="ex-last-note">${note}</div>` : '';
+          return metaLine || noteLine ? `
         <div class="ex-last-note-wrap">
           <div class="ex-last-note-label">Last session</div>
-          <div class="ex-last-note">${lastNotes[day][ex.name]}</div>
-        </div>` : ''}
+          ${metaLine}${noteLine}
+        </div>` : '';
+        })() : ''}
         <div class="ex-session-note-wrap">
           <div class="ex-session-note-label">My session note</div>
           <textarea class="ex-session-note" id="exnote-${day}-${i}"
